@@ -1,6 +1,7 @@
 from reg import evaluar
-from Thompson import thompson, graficar, grafo
+from Thompson import thompson, graficar, grafo, alfabeto
 from Errores import *
+from AFD import *
 
 inp = input("Ingrese la expresion regular: ")
 
@@ -9,13 +10,17 @@ verificacion = deteccion(inp) # Verificando que la expresión regular sea correc
 if verificacion == True: # Si la expresión regular es correcta, se procede a evaluarla.
     
     regex = evaluar(inp)
+    alfabeth = alfabeto(regex)
     print("La expresion regular es correcta.")
     print("La expresion regular es: ", regex)
     automata, lista, diccionario = thompson(regex)
+    
+    
     #graficar(automata, lista, diccionario)
     grafo(automata, lista, diccionario)
 
+    # Haciendo la conversión a AFD.
+    AFD(alfabeth, automata, lista, diccionario)
+
 else:
     print("La expresion regular es incorrecta.")
-
-# Arreglar el problema de paréntesis sin abrir.

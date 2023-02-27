@@ -188,7 +188,7 @@ def thompson(expresion_regular):
             lista.append(ns3)
             lista.append(ns4)
 
-            print("Lista: ", str(lista))
+            #print("Lista: ", str(lista))
 
         else:
             # Crear nuevos estados inicial y final para el autómata que representa el caracter actual.
@@ -255,6 +255,18 @@ def req(simbolo):
         
         return trans, nuevo_automata
 
+def alfabeto(regex):
+    # Método para obtener el alfabeto de la expresión regular.
+    alfabeto = []
+
+    for i in regex:
+        if i != '(' and i != ')' and i != '*' and i != '+' and i != '?' and i != '|' and i != 'ε' and i != '.':
+            alfabeto.append(i)
+            # Quitando los elementos repetidos.
+            alfabeto = list(dict.fromkeys(alfabeto))
+    
+    return alfabeto
+
 def graficar(automata, lista, diccionario): #Método para graficar el autómata.
 
     # Cambiando el título de la ventana.
@@ -276,7 +288,7 @@ def graficar(automata, lista, diccionario): #Método para graficar el autómata.
 
     G = nx.DiGraph() # Creando el grafo.
 
-    print("Diciconario: " + str(diccionario))
+    #print("Diciconario: " + str(diccionario))
 
     # Agregando los estados al grafo.
     for estado in diccionario:
@@ -326,7 +338,7 @@ def grafo(automata, lista, diccionario):
             grafo.node(estado, estado, color='blue')
     
     # Dibujando las aristas.
-    print("Estados: " + str(estados))
+    # print("Estados: " + str(estados))
 
     # Dibujando las transiciones.
     for key, value in diccionario.items():

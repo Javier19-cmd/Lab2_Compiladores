@@ -1,0 +1,8 @@
+// AFN de ejemplo
+digraph {
+	0
+	1
+	2 [shape=doublecircle]
+	0 -> 1 [label="ε"]
+	1 -> 2 [label=a]
+}

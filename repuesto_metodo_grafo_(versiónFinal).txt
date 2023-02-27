@@ -1,0 +1,23 @@
+def grafo(automata, lista, diccionario):
+    grafo = gv.Digraph('G', filename='grafo', format='png')
+
+    estados = [ str(estado) for estado in diccionario.keys() ]
+
+    # Dibujando los nodos.
+    for estado in estados:
+        if estado == str(automata.get_estado_inicial()):
+            grafo.node(estado, estado, color='green')
+        elif estado == str(automata.get_estado_final()):
+            grafo.node(estado, estado, color='red')
+        else:
+            grafo.node(estado, estado, color='blue')
+    
+    # Dibujando las aristas.
+    print("Estados: " + str(estados))
+
+    # Dibujando las transiciones.
+    for key, value in diccionario.items():
+        for simbolo, estado in value:
+            grafo.edge(str(key), str(estado), label=simbolo)
+
+    grafo.render('grafo', view=True)

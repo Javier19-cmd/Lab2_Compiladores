@@ -2,19 +2,15 @@ from reg import evaluar
 from Thompson import thompson, graficar, grafo, alfabeto
 from Errores import *
 from AFD_Converter import *
+import re 
 
 inp = input("Ingrese la expresion regular: ")
 
 
 # Recorriendo la expresión regular para verificar si hay un ? para cambiarlo por un a|ε.
-for i in range(len(inp)):
-    if inp[i] == "?":
-        inp = inp[:i] + "|" + "ε" + inp[i+1:]
-    if inp[i] == "+":
-        # Reemplazando el + por un rr*.
-        inp = inp[:i] + inp[i-1] + "*" + inp[i+1:]
+if "?" in inp:
+    inp = inp.replace("?", "|ε")
 
-print("Expresion regular: ", inp)
 
 verificacion = deteccion(inp) # Verificando que la expresión regular sea correcta.
 

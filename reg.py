@@ -36,6 +36,11 @@ def format_regex(regex):
 
     res += regex[-1]
 
+    # Si hay un +, se copia la expresión regular anterior y se le agrega el operador de cerradura de Kleene.
+    if "+" in res:
+        res = res.replace("+", "")
+        res = res + "." + res + "*"
+
     return res
 
 

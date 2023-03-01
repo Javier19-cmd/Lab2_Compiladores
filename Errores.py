@@ -16,7 +16,7 @@ def deteccion(regex):
     #     return False
     
     # Verificando que la expresión tenga letras o números.
-    coin = re.match(r"[a-zA-Z0-9]*", regex)
+    coin = re.match(r"[a-zA-Z0-9ε]*", regex)
 
     if not coin:
         print("Error: La expresión regular no tiene letras o números.")

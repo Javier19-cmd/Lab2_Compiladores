@@ -27,8 +27,30 @@ class Tree:
     #         t.right = self.right
     #         self.right = t
 
-    def __str__(self):
+    def get_left(self):
+        return str(self.left)
+    
+    def get_right(self):
+        return str(self.right)
+    
+    def get_child(self):
+        return str(self.child)
+    
+    def get_op(self):
+        return str(self.op)
+    
+    def get_label(self):
         return str(self.label)
+
+    def __str__(self):
+        if self.op == "|":
+            return f"{self.left}|{self.right}"
+        elif self.op == ".":
+            return f"{self.left}.{self.right}"
+        elif self.op == "*":
+            return f"{self.child}*"
+        else:
+            return self.label
 
     # def __str__(self): # Imprimiendo el árbol.
     #     # Impriendo el árbol en preorden.

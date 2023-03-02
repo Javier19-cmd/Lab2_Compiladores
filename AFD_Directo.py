@@ -11,7 +11,9 @@ class AFD_Directo:
         self.aumento() # Se le agrega un # al final de la expresión regular.
         print("La expresion regular es: ", self.regex)
 
-        self.construccion() # Construyendo el árbol.
+        arbol = self.arbol() # Construyendo el árbol.
+
+        self.imprimirArbol(arbol) # Imprimiendo el árbol.
 
     def aumento(self): # Función para agregarle un # al final de la expresión regular.
         self.regex = self.regex + "#."
@@ -98,7 +100,7 @@ class AFD_Directo:
 
             return self.siguientePosicion(regex[0]) | ultimasPosiciones
         
-    def construccion(self): # Función para construir el AFD. 
+    def arbol(self): # Función para construir el AFD. 
         # Paso 1 - Armar el árbol de la expresión regular.
 
         stack = [] # Pila para guardar los nodos del árbol.
@@ -109,32 +111,53 @@ class AFD_Directo:
                 dereha1 = stack.pop()
                 izquierda1 = stack.pop()
 
-                nodo = Tree(op="|", left=izquierda1, right=dereha1)
+                nodo = Tree(op=c, left=izquierda1, right=dereha1)
 
                 stack.append(nodo)
+
+                # print("Izquierda del nodo del or: ", nodo.left)
+                # print("Derecha del nodo del or: ", nodo.right)
+                #print("Operación del or: ", nodo.op)
+
+                # print("El nodo es: ", nodo)
             
             elif c == ".": # Si el caracter es un punto, entonces se crea un nodo con el caracter y se agregan los dos últimos nodos de la pila como hijos.
                 dereha2 = stack.pop()
                 izquierda2 = stack.pop()
                 
-                nodo2 = Tree(op=".", left=izquierda2, right=dereha2)
+                nodo2 = Tree(op=c, left=izquierda2, right=dereha2)
+
+                print("Izquierda del nodo del punto: ", nodo2.left)
 
                 stack.append(nodo2)
+
+                # print("Izquierda del nodo: ", nodo2.left)
+                # print("Derecha del nodo: ", nodo2.right)
+                # print("Operación: ", nodo2.op)
             
             elif c == "*": # Si el caracter es un asterisco, entonces se crea un nodo con el caracter y se agrega el último nodo de la pila como hijo.
                 hijo = stack.pop()
 
-                nodo3 = Tree(op="*", child=hijo)
+                #print("Hijo del nodo en el kleene: ", hijo)
+
+                nodo3 = Tree(op=c, child=hijo)
 
                 stack.append(nodo3)
+
+                # print("Hijo del nodo: ", nodo3.child)
+                # print("Operación: ", nodo3.op)
+
+                # print("El nodo es: ", nodo3)
             
             else: # Si el caracter no es un operador, entonces se crea un nodo con el caracter.
-                print(c)
-
                 nodo4 = Tree(label=c)
 
                 stack.append(nodo4)
-        
+
+                #print("Label del nodo: ", nodo4.label)
         
         return stack.pop() # Retornando el árbol.
+    
+    def imprimirArbol(self, arbol): # Función para imprimir el árbol.
+        print("Árbol de la expresión regular: ", arbol)
             

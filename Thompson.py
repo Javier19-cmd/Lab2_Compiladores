@@ -348,6 +348,6 @@ def grafo(automata, lista, diccionario):
     # Colocando el autómta de manera horizontal.
     grafo.graph_attr['rankdir'] = 'LR'
 
-    grafo.render('grafo', view=True)
+    grafo.render('AFN', view=True)
 
 

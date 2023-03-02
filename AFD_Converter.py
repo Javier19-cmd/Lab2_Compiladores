@@ -285,4 +285,4 @@ class AFD:
         # Colocando el autómta de manera horizontal.
         grafo.graph_attr['rankdir'] = 'LR'
 
-        grafo.render('grafo2', view=True) # Dibujando el grafo.
+        grafo.render('AFN2AFD', view=True) # Dibujando el grafo.

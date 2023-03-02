@@ -2,7 +2,7 @@ from reg import evaluar
 from Thompson import thompson, graficar, grafo, alfabeto
 from Errores import *
 from AFD_Converter import *
-import re 
+import re
 
 inp = input("Ingrese la expresion regular: ")
 

@@ -2,6 +2,7 @@ from reg import evaluar
 from Thompson import thompson, graficar, grafo, alfabeto
 from Errores import *
 from AFD_Converter import *
+from AFD_Directo import *
 import re
 
 inp = input("Ingrese la expresion regular: ")
@@ -42,6 +43,9 @@ if verificacion == True: # Si la expresión regular es correcta, se procede a ev
 
     # Haciendo la conversión a AFD.
     AFD(alfabeth, automata, lista, diccionario)
+
+    # Haciendo la conversión a AFD directo.
+    AFD_Directo(regex)
 
 else:
     print("La expresion regular es incorrecta.")

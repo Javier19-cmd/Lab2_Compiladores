@@ -8,3 +8,4 @@ ab(a|b)*abb(a|b)*
 (a|b)*a(a|b)(a|b)bbb(a|b)*((b*|b*)*a*b*b*(a*|b*)*)*(a*|b*)c
 (a|b)+abb(a|b)(a|b)*abb
 (a|b)*a(a|b)(a|b)bbb(a|b)*((b*|b*)*a*b*b*(a*|b*)*)*(a*|b*)c|ab(a|b)*abb(a|b)*|ε
+((1?)*)*

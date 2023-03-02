@@ -1,6 +1,9 @@
 """
 Archivo que se encargará de convertir el autómata finito no determinista a un autómata finito determinista.
 """
+from EstadoAFD import *
+from TransicionesAFD import *
+import graphviz as gv
 
 class AFD:
 
@@ -9,14 +12,22 @@ class AFD:
         self.automata = automata
         self.transiciones = transiciones
         self.diccionario = diccionario
+        self.estado_num = 0
+        self.trans_AFD = []
+        self.estados_Finales = []
+        self.estados_FinalesE = []
+        self.estados_AFD = []
+        self.estadoInicial = []
+        self.dict = []
 
         self.conversion()
+        self.graficar()
 
     def conversion(self): # Método para convertir el AFD a AFD.
         # Imprimiendo los datos del autómata.
 
-        print(self.automata)
-        print(self.diccionario)
+        #print(self.automata)
+        #print(self.diccionario)
 
         estado_inicial = self.eclosure(self.automata.estado_inicial) # Calculand el estado inicial del autómata.
 
@@ -24,88 +35,123 @@ class AFD:
 
         estdos_AFD = [estado_inicial] # Creando la lista de estados_AFD y guardando su primer estado.
         
-        t_trans = {} # Creando la tabla de transición de los estados.
+        #trans_AFD = [] # Creando la tabla de transición de los estados.
 
         estados_a_revisar = [estado_inicial] # Creando la lista de estados a revisar.
 
-        # print(estados_a_revisar, "Estados a revisar")
-        # print(estdos_AFD, "Estados AFD")
+        #print("Estados a revisar: ", estados_a_revisar)
 
-        while len(estados_a_revisar) > 0: # Mientras la lista de estados a revisar no esté vacía.
-            estado_actual = estados_a_revisar.pop() # Sacando el último elemento de la lista de estados a revisar.
+        while len(estados_a_revisar) > 0:
+            estado_actual_AFD = estados_a_revisar.pop(0) # Sacando el último estado de la lista de estados a revisar.
 
-            #print("Estado actual: ", estado_actual)
+            #print("Estado actual AFD: ", estado_actual_AFD)
+            transiciones_act = {} # Transiciones actuales.
 
             for simbolo in self.alfabeto: # Recorriendo el alfabeto.
-                # Por cada símbolo, se calcula el conjunto de estados alcanzables desde el estado actual.
-                estado_alcanzable = self.eclosure(self.move(estado_actual, simbolo))
 
-                if estado_alcanzable: # Si el conjunto de estados alcanzables no está vacío.
-                    if estado_alcanzable not in estdos_AFD: # Si el conjunto de estados alcanzables no está en la lista de estados_AFD.
-                        estdos_AFD.append(estado_alcanzable) # Se agrega el conjunto de estados alcanzables a la lista de estados_AFD.
-                        estados_a_revisar.append(estado_alcanzable) # Se agrega el conjunto de estados alcanzables a la lista de estados a revisar.
+
+                # Lista para los estados alcanzables.
+                estados_alcanzables = []
+
+                # Recorriendo los estados del estado actual del AFD.
+                for estado in estado_actual_AFD:
+                        
+                        # Verificando si el estado tiene transiciones con el símbolo actual.
+                        if estado in self.diccionario:
+                            
+                            # Si tiene transiciones con el símbolo actual, se agregan a la lista de estados alcanzables.
+                            for transicion in self.diccionario[estado]:
+                                if transicion[0] == simbolo: # Imprimiendo las transiciones con el símbolo actual.
+                                    # Calculando el cierre epsilon de los estados alcanzables.
+                                    estadoo = self.eclosure(transicion[1])
+
+                                    #print("Estadoo: ", estadoo)
+
+                                    # Guardando los estados alcanzables.
+                                    estados_alcanzables.append(estadoo)
+
+                #print("Transiciones actuales: ", transiciones_act)
+                
+                if len(estados_alcanzables) > 0: 
+                    for estad in estados_alcanzables: # Recorriendo los estados alcanzables y guardándolos en los estados del AFD.
+                        if estad not in estdos_AFD:
+                            estdos_AFD.append(estad)
+                            estados_a_revisar.append(estad)
                     
-                    t_trans[(tuple(estado_actual), simbolo)] = tuple(estado_alcanzable) # Creando la tupla para la tabla de transición.
+                    # Guardando las transiciones actuales con el símbolo actual.
+                    transiciones_act[simbolo] = estad
 
-        # Almacenando los estados finales del AFD.
-        estados_finales = []
+            #print("Estado actual: ", estado_actual_AFD, "transiciones: ", transiciones_act)
 
-        # for estado in estdos_AFD: # Recorriendo la lista de estados_AFD.
-        #     for estado_final in self.automata.estado_final: # Recorriendo la lista de estados finales del AFD.
-        #         if estado_final in estado: # Si el estado final está en el conjunto de estados.
-        #             estados_finales.append(estado) # Se agrega el conjunto de estados a la lista de estados finales.
+            #print("Estados AFD: ", estdos_AFD)
 
-        #print("Estados AFD: ", estdos_AFD)
-        print("Transiciones: ", t_trans)
+            # Recorriendo las transiciones actuales.
+            for simboloo, estado_ll in transiciones_act.items():
+                #print("Estado actual: ", estado_actual_AFD, "Simbolo: ", simboloo, "Estado: ", estado_ll)
 
-        # # Detectando los estados finales en el diccionario de transiciones.
-        # for key, value in t_trans.items(): 
-        #     print(key, value)
+                # Creando la transición del AFD.
+                trans = TransicionesAFD(estado_actual_AFD, simboloo, estado_ll)
 
-        #     if self.automata.estado_final in key or self.automata.estado_final in value:
-        #         print("Estado final detectado")
+                self.trans_AFD.append(trans)
 
-        # # for transicion in self.transiciones: 
-        # #     print(str(transicion))
 
-        # # Creando un diccionario para guardar los conjuntos que se generan, a cual conjunto llega con cada símbolo del alfabeto.
-        # conjuntos = {}
-
-        # # Diccionario para guardar los movimientos con cada símbolo del alfabeto.
-        # movimientos = {}
         
-        # # Primer paso: Calcular cerradura epsilon del estado inicial.
-        # # Para esto, se necesita el estado inicial y el diccionario de transiciones.
-        # ecr = self.eclosure(self.automata.estado_inicial) # Resultado de la cerradura epsilon del estado inicial.
+        #print("Transiciones del AFD: ", trans_AFD)
 
-        # # Segundo paso: Calcular los movimientos con cada símbolo del alfabeto.
-        # # Para esto, se necesita el alfabeto, el estado que se regresa de la cerradura epsilon y el diccionario de transiciones.
-        # for simbolo in self.alfabeto: # Recorriendo el alfabeto.
-        #     #print("Símbolo: ", simbolo)
-        #     moves = self.move(ecr, simbolo) # Calculando el conjunto de estados alcanzables desde el conjunto de estados que se regresa de la cerradura epsilon.
-        #     #a = self.eclosure(moves)
-        #     #print("Conjunto: ", a)
+        # Creando un diccionario para guardar los estados con sus etiquetas.
+        diccionario_estados = {}
 
-        #     # Guardando los movimientos en el diccionario.
-        #     movimientos[simbolo] = moves
+        # Recorriendo los estados del AFD.
+        for estado in estdos_AFD:
+            #print("Estado: ", estado)
 
-        # print("Movimientos: ", movimientos)
+            # Dando una etiqueta al estado.
+            etiqueta = "q" + str(self.estado_num)
+            self.estado_num += 1
 
-        # # Tercer paso: Calcular el cierre epsilon de cada conjunto de estados que se obtiene en el paso anterior.
-        # for key, value in movimientos.items(): # Recorriendo el diccionario de movimientos.
-        #     print("Key: ", key)
-        #     # Calculando el cierre epsilon de cada estado del conjunto de estados.
-        #     for estado in value:
-        #         #print("Estado: ", estado)
-        #         ecr1 = self.eclosure(estado)
-        #         #print("Cierre epsilon: ", ecr)
+            # Guardando el estado con su etiqueta.
+            diccionario_estados[etiqueta] = estado
 
-        #         # Guardando el conjunto de estados en el diccionario de la forma {conjunto: {simbolo, conjunto}}.
-        #         conjuntos[ecr1] = {key: ecr}
+        #print("Diccionario de estados: ", diccionario_estados)
+
+        # Cambiando los estados del AFD por sus etiquetas en la tabla de transiciones.
+        for transion in self.trans_AFD:
+            for etiqueta, estado in diccionario_estados.items():
+                if transion.estadoInicial == estado:
+                    transion.estadoInicial = etiqueta
+                
+                if transion.estadoFinal == estado:
+                    transion.estadoFinal = etiqueta
+
+
+        #print("Transiciones: ", self.trans_AFD)
         
-        # print("Conjuntos: ", conjuntos)
-        # #print("Alfabeto: ", self.alfabeto)
+        # Identificando los estados finales del AFD.
+        for estado in estdos_AFD:
+            if self.automata.estado_final in estado:
+                self.estados_Finales.append(estado)
 
+        # Etiqutando los estados finales del AFD.
+        for estadoss in self.estados_Finales:
+            for etiqueta, estadso in diccionario_estados.items():
+                if estadoss == estadso:
+                    self.estados_FinalesE.append(etiqueta)
+
+        # Guardando los estados etiquetados en una lista.
+        for estado in estdos_AFD:
+            for etiqueta, estad in diccionario_estados.items():
+                if estado == estad:
+                    self.estados_AFD.append(etiqueta)
+
+        # Guardando el estado inicial del AFD.
+        for estado in estdos_AFD:
+            if estado == estado_inicial:
+                # Buscando la etiqueta del estado inicial.
+                for etiqueta, estadd in diccionario_estados.items():
+                    if estado == estadd:
+                        self.estado_inicial_AFD = etiqueta
+
+        #return self.trans_AFD
 
     def eclosure(self, estado): #Método para calcular el cierre epsilon de un estado.
         
@@ -145,26 +191,55 @@ class AFD:
         # Retornando el resultado.
         return resultado
     
-    def move(self, conjunto, simbolo): # Método para calcular el conjunto de estados alcanzables desde un conjunto de estados.
-
-        # print("Conjunto: ", conjunto)
-        # print("Símbolo: ", simbolo)
+    def graficar(self): # Método para dibujar el AFD.
         
-        result = 0 # Lista para el resultado.
+        grafo = gv.Digraph(comment="AFD", format="png") # Creando el grafo.
 
-        #pila = [] # Stack para realizar el procedimiento.
+        print("Estados del AFD: ", self.estados_AFD)
+        print("Estados finales del AFD: ", self.estados_FinalesE)
+        
+        # for t in self.trans_AFD:
+        #     print(str(t))
+        
+        # print("Estado inicial AFD: ", self.estado_inicial_AFD)
 
-        # Verificando que movimientos se pueden hacer con el símbolo.
-        for estado in conjunto: # Recorriendo el conjunto de estados.
-            #print("Estado: ", estado)
+        estados = self.estados_AFD # Lista de estados del AFD.
 
-            for esta in self.diccionario[estado]:
-                #print("Transición: ", esta)
+        print(type(estados))
 
-                if esta[0] == simbolo:
-                    #print("Llegué al if")
-                    #print(esta[1])
-                    result = esta[1]
 
-        #print("Resultado: ", result)
-        return result 
+        # Convirtiendo la lista de estados en un diccionario.
+        diccionario_estados = {}
+
+        for i in self.trans_AFD:
+            if i.estadoInicial in diccionario_estados:
+                diccionario_estados[i.estadoInicial].append((i.simbolo, i.estadoFinal))
+            else: 
+                diccionario_estados[i.estadoInicial] = [(i.simbolo, i.estadoFinal)]
+
+        print("Diccionario de estados: ", diccionario_estados)
+
+        # Creando el diccionario de transiciones.
+        for key, value in diccionario_estados.items():
+            
+            print("Estado: ", key, "Transiciones: ", value)
+
+            # Dibujando las transiciones.
+            for simbolo, estado in value:
+                grafo.edge(key, estado, label=simbolo)
+
+        
+        
+
+        # Dibuja los estados del AFD.
+        for estado in estados:
+            if estado in self.estados_FinalesE:
+                grafo.node(estado, estado, shape="doublecircle")
+            else:
+                grafo.node(estado, estado, shape="circle")
+
+        
+        # Colocando el autómta de manera horizontal.
+        grafo.graph_attr['rankdir'] = 'LR'
+
+        grafo.render('grafo2', view=True) # Dibujando el grafo.

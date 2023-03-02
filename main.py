@@ -11,6 +11,20 @@ inp = input("Ingrese la expresion regular: ")
 if "?" in inp:
     inp = inp.replace("?", "|ε")
 
+# Recorriendo la expresión regular para hacer la idempotencia de la cerradura de Kleene (o sea si hubiera un a**** cambiarlo a a*)
+if "*" in inp:
+    inp = inp.replace("*****************", "*")
+    inp = inp.replace("****************", "*")
+    inp = inp.replace("***************", "*")
+    inp = inp.replace("**************", "*")
+    inp = inp.replace("************", "*")
+    inp = inp.replace("**********", "*")
+    inp = inp.replace("********", "*")
+    inp = inp.replace("******", "*")
+    inp = inp.replace("*****", "*")
+    inp = inp.replace("****", "*")
+    inp = inp.replace("***", "*")
+    inp = inp.replace("**", "*")
 
 verificacion = deteccion(inp) # Verificando que la expresión regular sea correcta.
 

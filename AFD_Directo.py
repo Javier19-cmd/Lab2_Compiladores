@@ -11,9 +11,9 @@ class AFD_Directo:
         self.aumento() # Se le agrega un # al final de la expresión regular.
         print("La expresion regular es: ", self.regex)
 
-        arbol = self.arbol() # Construyendo el árbol.
+        resultado = self.arbol() # Construyendo el árbol.
 
-        self.imprimirArbol(arbol) # Imprimiendo el árbol.
+        self.const(resultado) # Construyendo el AFD.
 
     def aumento(self): # Función para agregarle un # al final de la expresión regular.
         self.regex = self.regex + "#."
@@ -105,6 +105,8 @@ class AFD_Directo:
 
         stack = [] # Pila para guardar los nodos del árbol.
 
+        diccionario = {} # Diccionario para guardar las posiciones de cada nodo.
+
         # Recorriendo la expresión regular.
         for c in self.regex:
             if c == "|": # Si el caracter es un or, entonces se crea un nodo con el caracter y se agregan los dos últimos nodos de la pila como hijos.
@@ -120,6 +122,8 @@ class AFD_Directo:
                 #print("Operación del or: ", nodo.op)
 
                 # print("El nodo es: ", nodo)
+
+                #print("Nodo: ", str(nodo))
             
             elif c == ".": # Si el caracter es un punto, entonces se crea un nodo con el caracter y se agregan los dos últimos nodos de la pila como hijos.
                 dereha2 = stack.pop()
@@ -127,13 +131,15 @@ class AFD_Directo:
                 
                 nodo2 = Tree(op=c, left=izquierda2, right=dereha2)
 
-                print("Izquierda del nodo del punto: ", nodo2.left)
+                #print("Izquierda del nodo del punto: ", nodo2.left)
 
                 stack.append(nodo2)
 
                 # print("Izquierda del nodo: ", nodo2.left)
                 # print("Derecha del nodo: ", nodo2.right)
                 # print("Operación: ", nodo2.op)
+
+                #print("Nodo: ", str(nodo2))
             
             elif c == "*": # Si el caracter es un asterisco, entonces se crea un nodo con el caracter y se agrega el último nodo de la pila como hijo.
                 hijo = stack.pop()
@@ -148,6 +154,8 @@ class AFD_Directo:
                 # print("Operación: ", nodo3.op)
 
                 # print("El nodo es: ", nodo3)
+
+                #print("Nodo: ", str(nodo3))
             
             else: # Si el caracter no es un operador, entonces se crea un nodo con el caracter.
                 nodo4 = Tree(label=c)
@@ -155,9 +163,20 @@ class AFD_Directo:
                 stack.append(nodo4)
 
                 #print("Label del nodo: ", nodo4.label)
-        
+
+                #print("Nodo: ", str(nodo4))
+    
+
         return stack.pop() # Retornando el árbol.
     
-    def imprimirArbol(self, arbol): # Función para imprimir el árbol.
-        print("Árbol de la expresión regular: ", arbol)
-            
+    def const(self, arbol): # Método para construir el AFD.
+
+        print("Árbol: ", arbol)
+
+        for nodo in arbol: # Imprimiendo el árbol para ver sus nodos y padres.
+            if nodo != None:
+                print("Nodo: ", nodo)
+
+        
+
+        

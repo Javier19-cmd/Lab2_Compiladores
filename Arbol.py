@@ -41,6 +41,37 @@ class Tree:
     
     def get_label(self):
         return str(self.label)
+    
+    def __iter__(self):
+        # yield self.op
+        # yield self.label
+        # yield self.left
+        # yield self.right
+        # yield self.child
+
+        # # Devolviendo los nodos en preorden.
+        # if self.left:
+        #     yield from self.left
+        # if self.right:
+        #     yield from self.right
+        # if self.child:
+        #     yield from self.child
+        
+        # Devolviendo los nodos en preorden.
+        if self.op == "|":
+            yield from self.left
+            yield from self.op
+            yield from self.right
+        elif self.op == ".":
+            yield from self.left
+            yield from self.op
+            yield from self.right
+        elif self.op == "*":
+            yield from self.op
+            yield from self.child
+        else:
+            yield self.label
+
 
     def __str__(self):
         if self.op == "|":

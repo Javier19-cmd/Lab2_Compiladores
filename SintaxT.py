@@ -132,7 +132,51 @@ class SintaxT:
         if n.etiqueta == "*": # Followpos del kleene.
             for i in n.child.lastP:
                 self.followpos[i] = self.followpos[i].union(n.child.firstP)
+    
+    def primeraPosicion(self, b):
+        if b.etiqueta == "ε":
+            pass
+        elif b.etiqueta == ".":
+            
+            if b.left.Null:
+                b.firstP = b.left.firstP.union(b.right.firstP)
+            else:
+                b.firstP = b.left.firstP
         
+        
+        elif b.etiqueta == "|":
+
+            b.firstP = b.child.firstP
+        
+        elif b.etiqueta == "*":
+        
+            b.firstP = b.child.firstP
+        
+        elif b.etiqueta not in ["|", ".", "*"]:
+            
+            b.firstP.add(b.id)
+    
+    def ultimaPosicion(self, b):
+        if b.etiqueta == "ε":
+            pass
+        elif b.etiqueta == ".":
+            
+            if b.right.Null:
+                    b.lastP = b.left.lastP.union(b.right.lastP)
+            else:
+                b.lastP = b.right.lastP
+
+        elif b.etiqueta == "|":
+            
+            b.lastP = b.child.lastP
+
+        elif b.etiqueta == "*":
+            
+            b.lastP = b.child.lastP
+
+        elif b.etiqueta not in ["|", ".", "*"]:
+            
+            b.lastP.add(b.id)
     
     def analisis(self, arbol): # Función para analizar el AFD.
         # Paso 3 - Analizar el AFD.
@@ -184,8 +228,14 @@ class SintaxT:
         for b in arbol:
             
             if b.etiqueta not in ["|", ".", "*"]:
-                b.firstP.add(b.id)
-                b.lastP.add(b.id)
+                # b.firstP.add(b.id)
+                # b.lastP.add(b.id)
+
+                self.primeraPosicion(b)
+                self.ultimaPosicion(b)
+
+                # self.primeraPosicion(b)
+                # self.ultimaPosicion(b)
 
                 #print("Anulable: ", b.Null)
                 # print("Label: ", b.etiqueta)
@@ -195,6 +245,7 @@ class SintaxT:
             elif b.etiqueta == "|": # Computando el or.
                 b.firstP = b.left.firstP.union(b.right.firstP)
                 b.lastP = b.left.lastP.union(b.right.lastP)
+
                 #print("Anulable: ", b.Null)
                 # print("Or")
                 # print("First pos: ", b.firstP)
@@ -236,6 +287,17 @@ class SintaxT:
                 #print("Anulable: ", b.Null)
                 # print("First pos: ", b.firstP)
                 # print("Last pos: ", b.lastP)
+            # elif b.etiqueta == "#":
+            #     b.firstP = set()
+            #     b.lastP = set()
+
+            #     #print("Anulable: ", b.Null)
+            #     # print("First pos: ", b.firstP)
+            #     # print("Last pos: ", b.lastP)
+            
+            elif b.etiqueta == "ε":
+                pass
+        
 
     
         #print("Followpos: ", self.followpos)

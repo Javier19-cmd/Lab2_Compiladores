@@ -1,4 +1,4 @@
-// AFD
+// AFN2AFD
 digraph {
 	graph [rankdir=LR]
 	q0 -> q1 [label=a]

@@ -1,47 +1,21 @@
-from reg import evaluar
+from regex_tree import RegexTree
+import graphviz
 
-class Node:
-    def __init__(self, op=None, label=None, left=None, right=None, child=None):
-        self.op = op
-        self.label = label
-        self.left = left
-        self.right = right
-        self.hijo = child
+# Definir la expresión regular como una cadena
+regex_str = "a(b|c)*d"
 
-    def __str__(self):
-        if self.op == "|":
-            return f"{self.left}|{self.right}"
-        elif self.op == ".":
-            return f"{self.left}.{self.right}"
-        elif self.op == "*":
-            return f"{self.hijo}*"
-        else:
-            return self.label
+# Crear una instancia de la clase RegexTree
+regex_tree = RegexTree(regex_str)
 
-def thompson(regex):
-    stack = []
+# Construir las tablas de followpos, firstpos y lastpos
+regex_tree.build_positions()
 
-    for char in regex:
-        if char == "|":
-            right = stack.pop()
-            left = stack.pop()
-            node = Node(op="|", left=left, right=right)
-            stack.append(node)
-        elif char == ".":
-            right = stack.pop()
-            left = stack.pop()
-            node = Node(op=".", left=left, right=right)
-            stack.append(node)
-        elif char == "*":
-            hijo = stack.pop()
-            node = Node(op="*", child=hijo)
-            stack.append(node)
-        else:
-            node = Node(label=char)
-            stack.append(node)
+# Construir el AFD correspondiente utilizando las tablas de followpos, firstpos y lastpos
+regex_tree.build_afd()
 
-    return stack.pop()
+# Generar el diagrama del AFD en formato DOT
+dot_data = regex_tree.afd_to_dot()
 
-e = evaluar("ab|c*")
-
-print(thompson(e))
+# Renderizar el diagrama del AFD utilizando la biblioteca graphviz
+graph = graphviz.Source(dot_data)
+graph.render('afd', view=True)

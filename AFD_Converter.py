@@ -232,7 +232,7 @@ class AFD:
     
     def graficar(self): # Método para dibujar el AFD.
         
-        grafo = gv.Digraph(comment="AFD", format="png") # Creando el grafo.
+        grafo = gv.Digraph(comment="AFN2AFD", format="png") # Creando el grafo.
 
         #print("Estados del AFD: ", self.estados_AFD)
         #print("Estados finales del AFD: ", self.estados_FinalesE)
@@ -266,9 +266,6 @@ class AFD:
             # Dibujando las transiciones.
             for simbolo, estado in value:
                 grafo.edge(key, estado, label=simbolo)
-
-        
-        
 
         # Dibuja los estados del AFD.
         for estado in estados:

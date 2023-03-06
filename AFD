@@ -1,0 +1,11 @@
+// AFD
+digraph {
+	1 -> 1 [label=a]
+	1 -> 1 [label=b]
+	1 -> 1 [label=a]
+	1 -> 1 [label=b]
+	1 -> 1 [label=a]
+	1 -> 1 [label=b]
+	1 -> 1 [label=a]
+	1 -> 1 [label=b]
+}

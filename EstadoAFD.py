@@ -10,5 +10,8 @@ class Estado:
             self.transitions[a] = {} # Guardando las transiciones de cada estado.
         
 
+    def __repr__(self):
+        return str(self.id)
+
     def __str__(self):
-        return f"{str(self.id)}: {str(self.transitions)}"
+        return str(self.id)

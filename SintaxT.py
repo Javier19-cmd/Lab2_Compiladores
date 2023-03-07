@@ -12,10 +12,15 @@ class SintaxT:
         self.alfabeth = alfabeth
         self.contador = 1 # Contador de los estados.
         self.followpos = [] # Lista para guardar los followpos.
+        self.followposT = []
         self.leaves = dict()
         self.estadosAFD = [] # Lista con los estados a utilizar.
+        self.EstadosAceptAFD = [] # Lista con los estados finales a utilizar.
+        self.EstadoInicial = None # Estado inicial del AFD.
+        self.transiciones = [] # Lista para guaradar las transiciones del AFD final.
         self.estadosAFD_dict = [] # Diccionario para graficar.
         self.terminal = None
+        self.DTtrans = {}
 
         self.aumento() # Se le agrega un # al final de la expresión regular.
         #print("La expresion regular es: ", self.regex)
@@ -27,6 +32,8 @@ class SintaxT:
         self.construir() # Construyendo el árbol.
 
         self.grafica() # Método para graficar.
+
+        self.minimizar() # Minimización.
 
     def aumento(self): 
         # Paso 1 - Aumentar el árbol para obtener el AFD.
@@ -298,8 +305,6 @@ class SintaxT:
             elif b.etiqueta == "ε":
                 pass
         
-
-    
         #print("Followpos: ", self.followpos)
 
         #Eliminando el primer set del followpos.
@@ -310,7 +315,7 @@ class SintaxT:
             if c.etiqueta not in ["|", ".", "*"]:
                 self.leaves[c.id] = c.etiqueta
 
-        print("Leaves: ", self.leaves)
+        #print("Leaves: ", self.leaves)
 
         #print("Followpos: ", self.followpos)
 
@@ -352,6 +357,9 @@ class SintaxT:
         # Creando el estado inicial.
         estado_inicial = Estado(alfabeto=self.alfabeth, id_list=first_p, id=id_c, terminal_id=self.terminal)
 
+        # Guardando el estado inicial de forma global.
+        self.EstadoInicial = estado_inicial
+
         #print("Estado inicial: ", estado_inicial)
         
         id_c += 1 # Aumentando en 1 el id del estado.
@@ -373,6 +381,28 @@ class SintaxT:
                 #print("Cola: ", queue)
                 id_c += 1
             
+        # Guardando los estados finales en una lista.
+        for e in self.estadosAFD:
+            # Verificando que el id del estado final esté en el set.
+            if self.terminal in e.id_set:
+                self.EstadosAceptAFD.append(e)
+
+        # Post processing.
+        sin_estado = False
+        for estado in self.estadosAFD:
+            for a in self.alfabeth:
+                if estado.transitions[a] == {}:
+                    sin_estado = True
+                    estado.transitions[a] == id_c
+                
+                SET = estado.transitions[a]
+                for estado2 in self.estadosAFD:
+                    if estado2.id_set == SET:
+                        estado.transitions[a] = estado2.id
+        
+        # Imprimiendo las transiciones otra vez.
+        for estado in self.estadosAFD:
+            print("Estado con transiciones: ", estado.transitions)
 
     def DTran(self, estado, terminal): # Cálculo de las transiciones.
 
@@ -403,7 +433,7 @@ class SintaxT:
                         nuevo = False
                 
                 if nuevo:
-                    #print("Transición a agregar: ", estado.transitions[a]) 
+                    #print("Transición a agregar: ", estado.transitions[a])
                     nuevo_estado.append(estado.transitions[a])
             
         return nuevo_estado
@@ -411,62 +441,188 @@ class SintaxT:
     def grafica(self): #Método para graficar.
         grafo = gv.Digraph(comment="AFD", format="png")
 
-        for estado in self.estadosAFD:
-            print("Estados en el método de gráfica: ", estado)
+        # for estado in self.estadosAFD:
+        #     print("Estados en el método de gráfica: ", estado)
 
-
-        """
-        Pasando las transiciones de los estados a una lista de la siguiente forma: 
-
-        estado - simbolo - estado
-
-        """
-
-        lista = []
-        for estado in self.estadosAFD:
-            for simbolo in self.alfabeth:
-                if estado.transitions[simbolo] != {}:
-                    lista.append([estado.id_set, simbolo, estado.transitions[simbolo]])
+        # # Imprimiendo los estados y sus tansiciones.
+        # for estado in self.estadosAFD:
+        #     print("Estado: ", estado, "Transiciones: ", estado.transitions)
         
-        #print("Lista: ", lista)
-
-        lista2 = []
-
-        # Convirtiendo los sets de la lista a una nueva lista de listas.
-        for i in range(len(lista)):
-            # Guardando las listas como lista-símbolo-lista.
-            lista2.append([list(lista[i][0]), lista[i][1], list(lista[i][2])])
-
-        print("Lista: ", lista2)
-
-        num = 0
-
-        # Pasando la lista a un diccionario.
-        #diccionario_estados = {}
-
-        # for i in self.estadosAFD:
-        #     etiqueta = "q" + str(num)
-        #     num += 1
-        #     diccionario_estados[etiqueta] = i
-
-        # for key, value in diccionario_estados.items():
-        #     print(key, value)
-
-        # Colocando los estados.
+        # For indicado.
         for estado in self.estadosAFD:
+            for a in self.alfabeth:
+                
+                trans = estado.transitions[a]
+                print("Estado: ", estado, "Trans: ", trans)
 
-            #print("Terminal: ", self.terminal)
-            if self.terminal in estado.id_set:
-                grafo.node(str(estado.id_set), shape="doublecircle")
+                grafo.edge(str(estado), str(trans), label=a)
+
+        # Dibujando los estados del AFD.
+        for esta in self.estadosAFD:
+            if esta in self.EstadosAceptAFD:
+                print("Estado de aceptación: ", esta)
+                grafo.node(str(esta), str(esta), shape="doublecircle")
             else:
-                grafo.node(str(estado.id_set))
-            
-            # Agregando las transiciones.
-            for simbolo in self.alfabeth:
-                if estado.transitions[simbolo] != {}:
-                    grafo.edge(str(estado.id_set), str(estado.transitions[simbolo]), label=simbolo)
-
+                grafo.node(str(esta), str(esta), shape="circle")
+        
         # Colocando el autómta de manera horizontal.
         grafo.graph_attr['rankdir'] = 'LR'
 
-        grafo.render("AFD_Directo", view=True)
+        grafo.render('AFD_Directo', view=True) # Dibujando el grafo.        
+        
+
+    # Haciendo la minimización.
+    def minimizar(self):
+        
+        # # Imprimiendo las cosas que se van a utilizar.
+        # for estado in self.estadosAFD:
+        #     print("Estados en el método de minimización: ", estado)
+        
+        # for estadoAc in self.EstadosAceptAFD:
+        #     print("Estados finales: ", estadoAc)
+
+        # print("Estado inicial: ", self.EstadoInicial)
+
+        # for alfabeto in self.alfabeth:
+        #     print("Letra: ", alfabeto)
+        
+        # for transicion in self.transiciones:
+        #     print("Transición: ", transicion)
+
+        # Guardando los estados en una lista local.
+        # for a in self.estadosAFD:
+        #     print(a)
+
+        
+        # Paso 1: Creando una tabla de transiciones.
+        tabla_trans = {state: {} for state in self.estadosAFD}
+
+        # for a in tabla_trans: # Imprimiendo la tabla.
+        #     print("Estado: ", a)
+
+
+        diccionario = {}
+
+        """
+        Haciendo un diccionario con los estados y sus transiciones.
+        """
+
+        # for estado in self.estadosAFD:
+        #     print("Estado: ", estado.transitions)
+
+        # Creando un diccionario con el estado y sus transiciones.
+        for estado in self.estadosAFD:
+            for simbolo in self.alfabeth:
+                if estado.transitions[simbolo] != {}:
+                    if estado not in diccionario:
+                        diccionario[estado] = {}
+
+                    diccionario[estado][simbolo] = estado.transitions[simbolo]
+
+        # for key, value in diccionario.items():
+        #     print(key, value)
+
+        Q = self.estadosAFD
+        F = self.EstadosAceptAFD
+
+        # División inicial de los estados.
+        P = [self.EstadosAceptAFD, set(Q) - set(F)]
+        W = [self.EstadosAceptAFD]
+
+        while W: 
+            A = W.pop()
+            for a in self.alfabeth:
+                X = []
+
+                for q in A:
+                    print("q: ", q)
+                    X.append(diccionario[q][a])
+
+                for el in X:
+                    print("Estado: ", el)
+
+                # for Y in P:
+                #     Y_int_X = list(set(Y).intersection(set(X)))
+                #     Y_minus_X = list(set(Y) - set(X))
+                #     X_minus_Y = list(set(X) - set(Y))
+                #     if Y_int_X and Y_minus_X:
+                #         P.remove(Y)
+                #         P.extend([Y_int_X, Y_minus_X])
+                #         if Y in W:
+                #             W.remove(Y)
+                #             W.extend([Y_int_X, Y_minus_X])
+                #         else:
+                #             if len(Y_int_X) <= len(Y_minus_X):
+                #                 W.append(Y_int_X)
+                #             else:
+                #                 W.append(Y_minus_X)
+        
+        
+        # # Creación del autómata mínimo
+        # Q_min = []
+        # delta_min = {}
+        # q0_min = None
+        # F_min = []
+        # for X in P:
+        #     Q_min.append(X[0])
+        #     delta_min[X[0]] = {}
+        #     for a in self.alfabeth:
+        #         for Y in P:
+        #             if X[0] in Y:
+        #                 delta_min[X[0]][a] = Y[0]
+        #                 break
+        # for X in P:
+        #     if self.EstadoInicial in X:
+        #         q0_min = X[0]
+        #         break
+        # for X in P:
+        #     if set(X).intersection(set(self.EstadosAceptAFD)):
+        #         F_min.append(X[0])
+        
+        
+        # for elemento in self.transiciones: # Pasando las transiciones a un diccionario.
+        #     if elemento[1] not in diccionario:
+        #         diccionario[elemento[1]] = []
+
+        #     diccionario[elemento[1]].append((elemento[0], elemento[2]))
+    
+
+        # for estado in self.estadosAFD:
+        #     for simbolo in self.alfabeth:
+
+        #         #print("Estado: ", estado, "Simbolo: ", simbolo, "Transiciones: ", diccionario[simbolo])
+
+        #         tabla_trans[estado][simbolo] = diccionario[simbolo]
+
+        
+        # for key, value in tabla_trans.items():
+        #     for transicion in value:
+        #         print(key, transicion, value[transicion])
+
+        # non_final_states = set(self.estadosAFD) - set(self.EstadosAceptAFD)
+        # partitions = [self.EstadosAceptAFD, non_final_states]
+        
+        # # Repita hasta que no haya más conjuntos sin dividir
+        # while True:
+        #     new_partitions = []
+        #     for partition in partitions:
+        #         for symbol in self.alfabeth:
+        #             # Dividir el conjunto según a qué estados van
+        #             new_partition = []
+        #             for state in partition:
+        #                 next_state = tabla_trans[state][symbol]
+
+        #                 print("Next state: ", next_state)
+
+            #             for p in new_partition:
+            #                 if next_state in p:
+            #                     break
+            #             else:
+            #                 new_partition.append(set())
+            #             new_partition[-1].add(state)
+            #         new_partitions.extend(new_partition)
+                
+            # if new_partitions == partitions:
+            #     break
+            # else:
+            #     partitions = new_partitions

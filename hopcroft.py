@@ -1,4 +1,5 @@
 def hopcroft_minimization(Q, Sigma, delta, q0, F):
+
     # División inicial del autómata en dos conjuntos
     P = [F, list(set(Q) - set(F))]
     W = [F]
@@ -50,13 +51,11 @@ def hopcroft_minimization(Q, Sigma, delta, q0, F):
     return Q_min, Sigma, delta_min, q0_min, F_min
 
 
-Q = ['A', 'B', 'C', 'D', 'E']
-Sigma = ['0', '1']
-delta = {'A': {'0': 'B', '1': 'C'}, 'B': {'0': 'B', '1': 'D'},
-         'C': {'0': 'B', '1': 'C'}, 'D': {'0': 'E', '1': 'C'},
-         'E': {'0': 'B', '1': 'C'}}
-q0 = 'A'
-F = ['B', 'D', 'E']
+Q = [0, 1, 2, 3]
+Sigma = ['a', 'b']
+delta = {0: {'a': 1, 'b': 0}, 1: {'a': 1, 'b': 2}, 2: {'a': 1, 'b': 3}, 3: {'a': 1, 'b': 0}}
+q0 = 0
+F = [3]
 Q_min, Sigma_min, delta_min, q0_min, F_min = hopcroft_minimization(Q, Sigma, delta, q0, F)
 print(Q_min)
 print(Sigma_min)

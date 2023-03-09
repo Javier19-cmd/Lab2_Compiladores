@@ -542,7 +542,7 @@ class SintaxT:
                 #print("Estado en el método de búsqueda: ", estado, "Partición en el método de búsqueda: ", partition, estado in partition)
 
                 if estado in partition:
-                    #print("Estado: ", estado, "Partición: ", partition, "Tipo de estado en el true del if: ", type(estado))
+                    #print("Estado: ", estado, "Partición: ", partition, "i: ", i)
                     return i
 
                 # else: 
@@ -594,40 +594,136 @@ class SintaxT:
                 
                 #else:
                 
-                partitions = new_partitions # Guardando las particiones finales.
+                particiones = new_partitions # Guardando las particiones finales.
 
                 #print("Particiones finales: ", particione)
 
         # Construyendo el AFD minimizado.
-        new_states = [tuple(partition) for partition in partitions]
+        new_states = [tuple(partition) for partition in particiones]
         
         new_transitions = {}
 
         for estad in self.estadosAFD:
             particion = buscar_particion(estad)
 
-            print("Partición: ", particion)
+            #print("Partición: ", particion)
             
 
             # Buscando las transiciones de cada estado.
             for simbolo in self.alfabeth:
 
 
-                transicion = diccionario[estad][simbolo]
+                llegada = diccionario[estad][simbolo]
 
                 #print("Diccionario: ", diccionario)
                 
                 # Parseando la transición a tipo estado.
                 #transicion = Estado(id=transicion)
 
-                #print("Tipo de la transición en el método de minimización: ", type(transicion))
-                new = tuple(sorted([buscar_particion(diccionario[estad][simbolo])]))
-                new_transitions[(new_states[particion], simbolo)] = new_states[new[0]]
-        
-        #print("Transiciones: ", new_transitions)
-        new_final_states = set([buscar_particion(state) for state in self.EstadosAceptAFD])
-        #print("Estados finales: ", new_final_states)
+                # Imprimiendo los resultados.
+                #print("Resultado: ", buscar_particion(llegada))
 
+                # #print("Tipo de la transición en el método de minimización: ", type(transicion))
+                #new = tuple(sorted([buscar_particion(llegada)]))
+
+                new = tuple(sorted([buscar_particion(llegada)]))
+
+                #print("New: ", new)
+
+                # print("Estado: ", estad ,"New: ", new, "símbolo: ", simbolo)
+
+                #print("New states: ", new_states)
+
+                # Buscando a que estado llegó de la partición.
+
+
+                # print("New states: ", new_states[particion])
+
+                #print("Partición a crear: ", (new_states[particion], simbolo))
+
+                new_transitions[(new_states[particion], simbolo)] = new_states[new[0]]
                 
 
+
+        # # print("Estados: ", new_states)
+
+        # #print("Transiciones: ", new_transitions)
+        #new_final_states = set([buscar_particion(state) for state in self.EstadosAceptAFD])
+
+        new_finals = []
+        
+        for estadoA in self.EstadosAceptAFD:
+            final = buscar_particion(estadoA)
+
+            # print("Final: ", final)
+
+            # print("New states: ", new_states)
+
+            new_finals.append(new_states[final])
+        
+        #print("New finals: ", new_finals)
+        
         #print("Transiciones: ", new_transitions)
+
+        """
+        old_dict: new_transitions.
+        new_dict: final_trasitions.
+        """
+
+        final_transitions = {}
+
+        for (current_state,), symbol in new_transitions.keys(): # Transformando.
+            
+            next_s = new_transitions[((current_state,), symbol)][0]
+            final_transitions.setdefault(current_state, {})[symbol] = next_s
+        
+        print("Final transitions: ", final_transitions)
+
+        """
+        list_of_tuples: new_finals.
+        result_list = final_finals.
+        """
+        final_finals = [item for sublist in new_finals for item in sublist]
+        
+        #final_finals = list(range(max(temp) + 1))
+
+        print("Estados finales: ", final_finals)
+        
+
+        # Gráfica
+
+
+        grafo = gv.Digraph(comment="AFD_Directo_Minimizado", format="png")
+
+        # for estado in self.estadosAFD:
+        #     print("Estados en el método de gráfica: ", estado)
+
+        # # Imprimiendo los estados y sus tansiciones.
+        # for estado in self.estadosAFD:
+        #     print("Estado: ", estado, "Transiciones: ", estado.transitions)
+        
+        # For indicado.
+        for estado in self.estadosAFD:
+            for a in self.alfabeth:
+                
+                trans = estado.transitions[a]
+                # print("Estado: ", estado, "Trans: ", trans)
+
+                # Eliminar las transiciones vacías.
+                if trans == {}:
+                    continue
+                else:
+                    grafo.edge(str(estado), str(trans), label=a)
+
+        # Dibujando los estados del AFD.
+        for esta in self.estadosAFD:
+            if esta in self.EstadosAceptAFD:
+                #print("Estado de aceptación: ", esta)
+                grafo.node(str(esta), str(esta), shape="doublecircle")
+            else:
+                grafo.node(str(esta), str(esta), shape="circle")
+        
+        # Colocando el autómta de manera horizontal.
+        grafo.graph_attr['rankdir'] = 'LR'
+
+        grafo.render('AFD_Directo_Minimizado', view=True) # Dibujando el grafo.

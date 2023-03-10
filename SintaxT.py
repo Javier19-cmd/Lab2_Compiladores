@@ -517,15 +517,17 @@ class SintaxT:
 
                 diccionario[estado][a] = trans
 
-        print("Alfabeto: ", self.alfabeth)
+        # print("Alfabeto: ", self.alfabeth)
 
-        print("Diccionario: ", diccionario)
+        # print("Diccionario: ", diccionario)
 
-        print("Estados: ", self.estadosAFD)
-        print("Estado inicial: ", self.EstadoInicial)
+        # print("Estados: ", self.estadosAFD)
+        # print("Estado inicial: ", self.EstadoInicial)
         
         particiones = [[s for s in self.estadosAFD if s in self.EstadosAceptAFD], 
                        [s for s in self.estadosAFD if s not in self.EstadosAceptAFD]]
+        
+        #print("Particiones en el SintaxT: ", particiones)
 
         # Función auxiliar para buscar una partición que contenga un estado.
         def buscar_particion(estado):
@@ -562,6 +564,7 @@ class SintaxT:
                 for state in partition:
                     transiciones = [diccionario[state][simbolo] for simbolo in self.alfabeth]
                     #print("Transiciones: ", transiciones)
+                    #print("Diccionario: ", diccionario)
 
                     # Si algo no queda bien del resultado, revisar acá las transiciones.
 
@@ -677,7 +680,7 @@ class SintaxT:
             next_s = new_transitions[((current_state,), symbol)][0]
             final_transitions.setdefault(current_state, {})[symbol] = next_s
         
-        print("Final transitions: ", final_transitions)
+        #print("Final transitions: ", final_transitions)
 
         """
         list_of_tuples: new_finals.
@@ -687,7 +690,7 @@ class SintaxT:
         
         #final_finals = list(range(max(temp) + 1))
 
-        print("Estados finales: ", final_finals)
+        #print("Estados finales: ", final_finals)
         
 
         # Gráfica

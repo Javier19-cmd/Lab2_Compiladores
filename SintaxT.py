@@ -480,28 +480,11 @@ class SintaxT:
     # Haciendo la minimización.
     def minimizar(self):
         
-        # # Imprimiendo las cosas que se van a utilizar.
-        # for estado in self.estadosAFD:
-        #     print("Estados en el método de minimización: ", estado)
+        diccionario_m = {}
+        finales_m = []
+        estados_m = []
+        inicial_m = []
         
-        # for estadoAc in self.EstadosAceptAFD:
-        #     print("Estados finales: ", estadoAc)
-
-        # print("Estado inicial: ", self.EstadoInicial)
-
-        # for alfabeto in self.alfabeth:
-        #     print("Letra: ", alfabeto)
-        
-        # for transicion in self.transiciones:
-        #     print("Transición: ", transicion)
-
-        Q = self.estadosAFD
-        F = self.EstadosAceptAFD
-
-        # print("Q: ", Q)
-        # print("F: ", F)
-        # print("Estado inicial: ", self.EstadoInicial)
-
         diccionario = {}
 
         # For indicado.
@@ -599,6 +582,11 @@ class SintaxT:
                 
                 particiones = new_partitions # Guardando las particiones finales.
 
+                for i, partition in enumerate(particiones):
+                    # Buscando el estado inicial.
+                    if self.EstadoInicial in partition:
+                        inicial_m.append(self.EstadoInicial)
+
                 #print("Particiones finales: ", particione)
 
         # Construyendo el AFD minimizado.
@@ -644,6 +632,9 @@ class SintaxT:
 
                 #print("Partición a crear: ", (new_states[particion], simbolo))
 
+                if new[0] is None: 
+                    continue
+
                 new_transitions[(new_states[particion], simbolo)] = new_states[new[0]]
                 
 
@@ -673,59 +664,90 @@ class SintaxT:
         new_dict: final_trasitions.
         """
 
-        final_transitions = {}
-
-        for (current_state,), symbol in new_transitions.keys(): # Transformando.
-            
-            next_s = new_transitions[((current_state,), symbol)][0]
-            final_transitions.setdefault(current_state, {})[symbol] = next_s
         
-        #print("Final transitions: ", final_transitions)
+        # print("Final transitions: ", final_transitions)
+
+        # Reordenando los estados.
+        for tupla in new_states:
+            if tupla in new_finals:
+                #print("Tupla con el estado final: ", tupla)
+                indice = new_states.index(tupla)
+                new_states.append(new_states.pop(indice))
+
+        # Creando un diccionario con los nuevos estados y sus íd's nuevos.
+        new_dict = {}
+
+        for i, tupla in enumerate(new_states):
+            #print("Id: ", i)
+
+            new_dict[tupla] = i
+
+        for tup, val in new_transitions.items(): # Dándole más estética al diciconario.
+            diccionario_m[(new_dict[tup[0]], tup[1])] = new_dict[val]
+
+            if val in new_finals: # Identificando los finales.
+                finales_m.append(new_dict[val])
+            estados_m.append(new_dict[tup[0]])
+        
+
+        # Quitando repeticiones.
+        finales_m = list(dict.fromkeys(finales_m))
+        estados_m = list(dict.fromkeys(estados_m))
+
 
         """
-        list_of_tuples: new_finals.
-        result_list = final_finals.
+        Listas a utilizar: 
+        diccionario_m: Diccionario con las transiciones.
+        finales_m: Lista con los estados finales.
+        estados_m: Lista con los estados.
         """
-        final_finals = [item for sublist in new_finals for item in sublist]
         
-        #final_finals = list(range(max(temp) + 1))
+        # Facilitando un poco la graficada.
+        diccionario_temporal = {}
 
-        #print("Estados finales: ", final_finals)
+        for c, v in diccionario_m.items():
+            if c[0] not in diccionario_temporal:
+                diccionario_temporal[c[0]] = {}
+            diccionario_temporal[c[0]][c[1]] = v
+
+        diccionario_m = diccionario_temporal.copy()
+
+        # Cambios
+        new_t = {} 
+        for keys, values in diccionario_m.items():
+            new_t[keys] = [(k, v) for k, v in values.items()]
         
+        diccionario_m = new_t.copy()
+    
+        print("Diccionario final: ", diccionario_m)
+        print("Finales: ", finales_m)
+        print("Inicial: ", inicial_m)
+        print("Estados: ", estados_m)
 
         # Gráfica
-
-
         grafo = gv.Digraph(comment="AFD_Directo_Minimizado", format="png")
 
-        # for estado in self.estadosAFD:
-        #     print("Estados en el método de gráfica: ", estado)
+        for ke, va in diccionario_m.items():
+            
+            for ks, vs in va: # Transiciones.
+                grafo.edge(str(ke), str(vs), label=str(ks))
 
-        # # Imprimiendo los estados y sus tansiciones.
-        # for estado in self.estadosAFD:
-        #     print("Estado: ", estado, "Transiciones: ", estado.transitions)
-        
-        # For indicado.
-        for estado in self.estadosAFD:
-            for a in self.alfabeth:
+            # Estados.
+            for st in estados_m:
                 
-                trans = estado.transitions[a]
-                # print("Estado: ", estado, "Trans: ", trans)
+                if st in finales_m:
+                    grafo.node(str(st), str(st), shape="doublecircle")
+                
+                elif st not in finales_m or st not in inicial_m:
+                    grafo.node(str(st), str(st), shape="circle")
+                
+                if st in inicial_m:
+                    print("Estado inicial: ", st)
+                    grafo.node(str(st), str(st), shape="circle", color="green")
+                    #print("Inicial: ", self.inicial_m)
 
-                # Eliminar las transiciones vacías.
-                if trans == {}:
-                    continue
-                else:
-                    grafo.edge(str(estado), str(trans), label=a)
+        # Colocando título a la imagen.
 
-        # Dibujando los estados del AFD.
-        for esta in self.estadosAFD:
-            if esta in self.EstadosAceptAFD:
-                #print("Estado de aceptación: ", esta)
-                grafo.node(str(esta), str(esta), shape="doublecircle")
-            else:
-                grafo.node(str(esta), str(esta), shape="circle")
-        
         # Colocando el autómta de manera horizontal.
         grafo.graph_attr['rankdir'] = 'LR'
 

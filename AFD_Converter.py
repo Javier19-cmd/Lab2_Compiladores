@@ -34,6 +34,7 @@ class AFD:
         self.diccionario_m = {}
         self.finales_m = []
         self.estados_m = []
+        self.inicial_m = []
 
         self.conversion()
         self.graficar()
@@ -374,7 +375,7 @@ class AFD:
         particiones = [[s for s in self.estados_AFD_in if s in self.estados_Finales_I], 
                        [s for s in self.estados_AFD_in if s not in self.estados_Finales_I]]
 
-        print("Particiones: ", particiones)
+        #print("Particiones: ", particiones)
 
         def buscar_particion(estado):
             # Función para buscar la partición de un estado.
@@ -394,7 +395,7 @@ class AFD:
                     #print("Diccionario: ", diccionario)
                     transiciones = [diccionario[state][symbol] for symbol in self.alfabeto]
 
-                    print("Transiciones: ", transiciones)
+                    #print("Transiciones: ", transiciones)
 
                     # Quitando las parejas que llegan a {}.
                     transiciones = [t for t in transiciones if t != {}]
@@ -420,6 +421,15 @@ class AFD:
                     itera = False             
 
                 particiones = new_partitions # Guardando las particiones finales.
+
+                # Guardando el estado inicial.
+                for i, partition in enumerate(particiones):
+                    if self.estado_inicial_I in partition:
+                        self.estado_inicial_I = i
+                
+                print("Estado inicial del AFD minimizado: ", self.estado_inicial_I)
+                for es in self.estado_inicial_I:
+                    self.inicial_m.append(es)
 
         # Construyendo el AFD minimizado.
         new_states = [tuple(partition) for partition in particiones]
@@ -469,7 +479,6 @@ class AFD:
                 new_states.append(new_states.pop(indice))
 
         #print("New states: ", new_states)
-        # print("New transitions: ", new_transitions)
         # print("New finals: ", new_finals)
 
         # Creando un diccionario con los nuevos estados y sus íd's nuevos.
@@ -482,13 +491,10 @@ class AFD:
         
 
         # # Imprimiendo el diccionario de transiciones.
-        # print("New transitions: ", new_transitions)
+        #print("New transitions en afd converter: ", new_transitions)
         # print("New dict: ", new_dict)
 
         #diccionario_n = {}
-
-        lista_estados_temp = []
-        lista_estados_f_temp = []
 
         for tupla, valor in new_transitions.items():
             # print("Tupla: ", tupla)
@@ -501,13 +507,16 @@ class AFD:
                 #print("Valor: ", valor)
 
                 self.finales_m.append(new_dict[valor])
+        
 
             #if valor not in new_finals:
             self.estados_m.append(new_dict[valor])
 
         self.finales_m = list(set(self.finales_m)) # Quitando repeticiones.
         self.estados_m = list(set(self.estados_m)) # Quitando repeticiones.
-
+        # Guardando el estado inicial.
+        #self.inicial_m = new_dict[self.inicial_m]
+        
 
 
         # Diccionario temporal.
@@ -559,7 +568,9 @@ class AFD:
         for estado in self.estados_m:
             if estado in self.finales_m:
                 grafo.node(str(estado), str(estado), shape="doublecircle")
-            else:
+            elif estado in self.inicial_m:
+                grafo.node(str(estado), str(estado), shape="circle", color="green")
+            elif estado not in self.finales_m or estado not in self.inicial_m:
                 grafo.node(str(estado), str(estado), shape="circle")
 
         # Colocando el autómta de manera horizontal.

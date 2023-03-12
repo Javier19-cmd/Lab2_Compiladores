@@ -408,10 +408,12 @@ class AFD:
 
                     # Si hay una transición vacía en transiciones, continuar,
                     # de lo contrario, buscar la partición del estado destino.
-                    if [] in transiciones:
-                        transiciones.remove([])
 
-                    equivalent_states.setdefault(tuple(transiciones), []).append(state)
+                    lista_sin_vacios = list(filter(lambda x: x != [], transiciones))
+
+                    #print("Transiciones:", lista_sin_vacios)
+
+                    equivalent_states.setdefault(tuple(lista_sin_vacios), []).append(state)
 
                 # Dividiendo la partición en nuevas particiones, de ser posible.
                 subpartitions = list(equivalent_states.values())
@@ -475,7 +477,16 @@ class AFD:
 
             # print("New states: ", new_states)
 
-            new_finals.append(new_states[final])  
+            new_finals.append(new_states[final]) 
+
+        new_initial = []
+
+        for estadoA in self.inicial_m:
+            inicial = buscar_particion(estadoA)
+
+            new_initial.append(new_states[inicial])
+
+        #print("New initial: ", new_initial)
         
         """
         old_dict: new_transitions.
@@ -493,9 +504,6 @@ class AFD:
                 indice = new_states.index(tupla)
                 new_states.append(new_states.pop(indice))
 
-        #print("New states: ", new_states)
-        # print("New finals: ", new_finals)
-
         # Creando un diccionario con los nuevos estados y sus íd's nuevos.
         new_dict = {}
 
@@ -512,23 +520,35 @@ class AFD:
         #diccionario_n = {}
 
         for tupla, valor in new_transitions.items():
-            # print("Tupla: ", tupla)
-            # print("Valor: ", valor)
+            #print("Tupla[0]: ", tupla[0], "valor: ", valor)
+
 
             self.diccionario_m[(new_dict[tupla[0]], tupla[1])] = new_dict[valor]
 
             # Guardando el estado final en otra variable.
-            if valor in new_finals:
+            if tupla[0] in new_finals or valor in new_finals:
                 #print("Valor: ", valor)
 
+                self.finales_m.append(new_dict[tupla[0]])
                 self.finales_m.append(new_dict[valor])
-        
+            
+            if tupla[0] in new_initial or valor in new_initial:
+                self.inicial_m.append(new_dict[valor])
+                self.inicial_m.append(new_dict[tupla[0]])
 
-            #if valor not in new_finals:
+            #print("new_dict[valor]: ", new_dict[valor])
+
             self.estados_m.append(new_dict[valor])
+            self.estados_m.append(new_dict[tupla[0]])
+
+
 
         self.finales_m = list(set(self.finales_m)) # Quitando repeticiones.
+        self.inicial_m = list(set(self.inicial_m)) # Quitando repeticiones.
         self.estados_m = list(set(self.estados_m)) # Quitando repeticiones.
+
+        #print("Estados: ", self.estados_m)
+        
         # Guardando el estado inicial.
         #self.inicial_m = new_dict[self.inicial_m]
         
@@ -570,6 +590,7 @@ class AFD:
         self.alfabeto = alfabeto del AFD.
         """
 
+        #print("New transitions. ", self.diccionario_m)
 
         # Graficando el diccionario.
         grafo = gv.Digraph(comment="AFN2AFD_Minimizado", format="png")
@@ -584,11 +605,20 @@ class AFD:
         
         # Dibujando los estados.
         for estado in self.estados_m:
+            
+            #print("Estado: ", estado, "Finales: ", self.finales_m, "Iniciales: ", self.inicial_m.
+
             if estado in self.finales_m:
+                
+                #print("Llegué al final: ", estado)
                 grafo.node(str(estado), str(estado), shape="doublecircle")
+            
             elif estado in self.inicial_m:
+
                 grafo.node(str(estado), str(estado), shape="circle", color="green")
-            elif estado not in self.finales_m or estado not in self.inicial_m:
+            
+            else:
+            
                 grafo.node(str(estado), str(estado), shape="circle")
 
         # Colocando el autómta de manera horizontal.

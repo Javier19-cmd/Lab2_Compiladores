@@ -466,9 +466,15 @@ class SintaxT:
 
         # Dibujando los estados del AFD.
         for esta in self.estadosAFD:
+    
             if esta in self.EstadosAceptAFD:
                 #print("Estado de aceptación: ", esta)
                 grafo.node(str(esta), str(esta), shape="doublecircle")
+            
+            elif esta == self.EstadoInicial: 
+
+                grafo.node(str(esta), str(esta), shape="circle", color="green")
+
             else:
                 grafo.node(str(esta), str(esta), shape="circle")
         
@@ -586,7 +592,7 @@ class SintaxT:
                 for i, partition in enumerate(particiones):
                     # Buscando el estado inicial.
                     if self.EstadoInicial in partition:
-                        inicial_m.append(self.EstadoInicial)
+                        inicial_m.append(self.EstadoInicial.id)
 
                 #print("Particiones finales: ", particione)
 
@@ -683,17 +689,39 @@ class SintaxT:
 
             new_dict[tupla] = i
 
+        #print("New dict: ", new_dict)
+
         for tup, val in new_transitions.items(): # Dándole más estética al diciconario.
             diccionario_m[(new_dict[tup[0]], tup[1])] = new_dict[val]
 
-            if val in new_finals: # Identificando los finales.
+            if tup[0] in new_finals or val in new_finals:
+                #print("Estado final: ", new_dict[val])
                 finales_m.append(new_dict[val])
+                finales_m.append(new_dict[tup[0]])
+            
+            if tup[0] in inicial_m or val in inicial_m:
+                #print("Estado final: ", new_dict[val])
+                inicial_m.append(new_dict[val])
+                inicial_m.append[new_dict[tup[0]]]
+
+            estados_m.append(new_dict[val])
             estados_m.append(new_dict[tup[0]])
-        
 
         # Quitando repeticiones.
-        finales_m = list(dict.fromkeys(finales_m))
-        estados_m = list(dict.fromkeys(estados_m))
+        inicial_m = list(set(inicial_m))
+        finales_m = list(set(finales_m))
+        estados_m = list(set(estados_m))
+
+        # Pasando todos los estados a tipo int.
+        for i, estado in enumerate(estados_m):
+            estados_m[i] = int(estado)
+        
+        for i, estado in enumerate(finales_m):
+            print(type(estado))
+            finales_m[i] = int(estado)
+        
+        for i, estado in enumerate(inicial_m):
+            inicial_m[i] = int(estado)
 
 
         """
@@ -720,10 +748,11 @@ class SintaxT:
         
         diccionario_m = new_t.copy()
     
-        # print("Diccionario final: ", diccionario_m)
+        # # print("Diccionario final: ", diccionario_m)
         # print("Finales: ", finales_m)
         # print("Inicial: ", inicial_m)
         # print("Estados: ", estados_m)
+        # print("Inicial: ", inicial_m)
 
         # Gráfica
         grafo = gv.Digraph(comment="AFD_Directo_Minimizado", format="png")
@@ -734,19 +763,23 @@ class SintaxT:
             for ks, vs in va: # Transiciones.
                 grafo.edge(str(ke), str(vs), label=str(ks))
 
-            # Estados.
-            for st in estados_m:
+        # Dibujando los estados.
+        for estado in estados_m:
+            
+            #print("Estado: ", estado, "Finales: ", self.finales_m, "Iniciales: ", self.inicial_m.
+
+            if estado in finales_m:
                 
-                if st in finales_m:
-                    grafo.node(str(st), str(st), shape="doublecircle")
-                
-                elif st not in finales_m or st not in inicial_m:
-                    grafo.node(str(st), str(st), shape="circle")
-                
-                if st in inicial_m:
-                    print("Estado inicial: ", st)
-                    grafo.node(str(st), str(st), shape="circle", color="green")
-                    #print("Inicial: ", self.inicial_m)
+                #print("Llegué al final: ", estado)
+                grafo.node(str(estado), str(estado), shape="doublecircle")
+            
+            elif estado in inicial_m:
+
+                grafo.node(str(estado), str(estado), shape="circle", color="green")
+            
+            else:
+            
+                grafo.node(str(estado), str(estado), shape="circle")
 
         # Colocando título a la imagen.
 

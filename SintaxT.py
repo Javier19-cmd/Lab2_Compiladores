@@ -717,7 +717,7 @@ class SintaxT:
             estados_m[i] = int(estado)
         
         for i, estado in enumerate(finales_m):
-            print(type(estado))
+            #print(type(estado))
             finales_m[i] = int(estado)
         
         for i, estado in enumerate(inicial_m):

@@ -102,7 +102,7 @@ class AFD:
     
             # Recorriendo las transiciones actuales.
             for simboloo, estado_ll in transiciones_act.items():
-                print("Estado actual: ", estado_actual_AFD, "Simbolo: ", simboloo, "Estado: ", estado_ll)
+                #print("Estado actual: ", estado_actual_AFD, "Simbolo: ", simboloo, "Estado: ", estado_ll)
                 
                 # Si el estado actual y el estado de llegada están vacíos, entonces no se incluyen.
                 if estado_actual_AFD == []:
@@ -122,15 +122,15 @@ class AFD:
     
 
         # Eliminando el estado vacío.
-
+        #print("Estados del AFD convertido: ", estdos_AFD)
         for est in estdos_AFD:
             if est == []:
                 estdos_AFD.remove(est) 
 
-        print("Estados del AFD: ", estdos_AFD)
+        # print("Estados del AFD: ", estdos_AFD)
         
-        for trans in self.trans_AFD:
-            print("Transición: ", trans)
+        # for trans in self.trans_AFD:
+        #     print("Transición: ", trans)
 
         # Creando un diccionario para guardar los estados con sus etiquetas.
         #diccionario_estados = {}
@@ -388,7 +388,7 @@ class AFD:
         
         itera = True # Variable para controlar el ciclo while.
         
-        print("Diccionario: ", diccionario)
+        #print("Diccionario: ", diccionario)
 
         while itera: 
             new_partitions = [] # Lista para guardar las nuevas particiones.
@@ -574,6 +574,9 @@ class AFD:
         # Graficando el diccionario.
         grafo = gv.Digraph(comment="AFN2AFD_Minimizado", format="png")
 
+        # Colocando título.
+        grafo.node('title', 'AFN2AFD: Minimizado', shape='none')
+
         for key, value in self.diccionario_m.items():
 
             for simbolo, estado in value:
@@ -597,6 +600,9 @@ class AFD:
     def graficar(self): # Método para dibujar el AFD.
         
         grafo = gv.Digraph(comment="AFN2AFD", format="png") # Creando el grafo.
+
+        # Colocando título.
+        grafo.node('title', 'AFN2AFD: No minimizado', shape='none')
 
         #print("Estados del AFD: ", self.estados_AFD)
         #print("Estados finales del AFD: ", self.estados_FinalesE)

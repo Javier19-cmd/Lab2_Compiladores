@@ -325,6 +325,8 @@ def graficar(automata, lista, diccionario): #Método para graficar el autómata.
 
 def grafo(automata, lista, diccionario):
     grafo = gv.Digraph('G', filename='grafo', format='png')
+    
+    grafo.node('title', 'AFN', shape='none')
 
     estados = [ str(estado) for estado in diccionario.keys() ]
 

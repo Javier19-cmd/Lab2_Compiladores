@@ -442,6 +442,7 @@ class SintaxT:
     
     def grafica(self): #Método para graficar.
         grafo = gv.Digraph(comment="AFD", format="png")
+        grafo.node('title', 'AFD', shape='none')
 
         # for estado in self.estadosAFD:
         #     print("Estados en el método de gráfica: ", estado)
@@ -726,6 +727,7 @@ class SintaxT:
 
         # Gráfica
         grafo = gv.Digraph(comment="AFD_Directo_Minimizado", format="png")
+        grafo.node('title', 'AFD Minimizado', shape='none')
 
         for ke, va in diccionario_m.items():
             

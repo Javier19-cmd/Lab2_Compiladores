@@ -719,10 +719,10 @@ class SintaxT:
         
         diccionario_m = new_t.copy()
     
-        print("Diccionario final: ", diccionario_m)
-        print("Finales: ", finales_m)
-        print("Inicial: ", inicial_m)
-        print("Estados: ", estados_m)
+        # print("Diccionario final: ", diccionario_m)
+        # print("Finales: ", finales_m)
+        # print("Inicial: ", inicial_m)
+        # print("Estados: ", estados_m)
 
         # Gráfica
         grafo = gv.Digraph(comment="AFD_Directo_Minimizado", format="png")

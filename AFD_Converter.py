@@ -52,7 +52,7 @@ class AFD:
 
         self.estado_inicial = self.eclosure(temp) # Calculand el estado inicial del autómata.
 
-        print(type(self.estado_inicial))
+        #print(type(self.estado_inicial))
 
         #print("Estado inicial: ", estado_inicial) # Imprimiendo el estado inicial.
 
@@ -84,27 +84,6 @@ class AFD:
                 estadoo = self.eclosure(res)
 
                 estados_alcanzables.append(estadoo)
-
-                # # Recorriendo los estados del estado actual del AFD.
-                # for estado in estado_actual_AFD:
-                        
-                #         # Verificando si el estado tiene transiciones con el símbolo actual.
-                #         if estado in self.diccionario:
-                            
-                #             # Si tiene transiciones con el símbolo actual, se agregan a la lista de estados alcanzables.
-                #             for transicion in self.diccionario[estado]:
-                #                 if transicion[0] == simbolo: # Imprimiendo las transiciones con el símbolo actual.
-                #                     print("Transicion: ", transicion)
-                #                     # Calculando el cierre epsilon de los estados alcanzables.
-                #                     estadoo = self.eclosure(transicion[1])
-
-                #                     print("Estado: ", estadoo)
-
-                #                     # Guardando los estados alcanzables.
-                #                     estados_alcanzables.append(estadoo)
-
-                #print("Transiciones actuales: ", transiciones_act)
-               # print("Estados alcanzables: ", estados_alcanzables)
                 
                 if len(estados_alcanzables) > 0: 
                     for estad in estados_alcanzables: # Recorriendo los estados alcanzables y guardándolos en los estados del AFD.
@@ -114,23 +93,44 @@ class AFD:
                     
                     # Guardando las transiciones actuales con el símbolo actual.
                     transiciones_act[simbolo] = estad
+                
+            #print("Transiciones: ", transiciones_act)
 
             #print("Estado actual: ", estado_actual_AFD, "transiciones: ", transiciones_act)
 
             #print("Estados AFD: ", estdos_AFD)
-
+    
             # Recorriendo las transiciones actuales.
             for simboloo, estado_ll in transiciones_act.items():
-                #print("Estado actual: ", estado_actual_AFD, "Simbolo: ", simboloo, "Estado: ", estado_ll)
+                print("Estado actual: ", estado_actual_AFD, "Simbolo: ", simboloo, "Estado: ", estado_ll)
+                
+                # Si el estado actual y el estado de llegada están vacíos, entonces no se incluyen.
+                if estado_actual_AFD == []:
+                    continue
+
 
                 # Creando la transición del AFD.
                 trans = TransicionesAFD(estado_actual_AFD, simboloo, estado_ll)
 
                 self.trans_AFD.append(trans)
 
+        # # Quitando el estado trampa.
+        # for estadoAFD in estdos_AFD:
+        #     # Si el esatdo está vacío, entonces se quita.
+        #     if estadoAFD == []:
+        #         estdos_AFD.remove(estadoAFD)
+    
 
+        # Eliminando el estado vacío.
+
+        for est in estdos_AFD:
+            if est == []:
+                estdos_AFD.remove(est) 
+
+        print("Estados del AFD: ", estdos_AFD)
         
-        #print("Transiciones del AFD: ", trans_AFD)
+        for trans in self.trans_AFD:
+            print("Transición: ", trans)
 
         # Creando un diccionario para guardar los estados con sus etiquetas.
         #diccionario_estados = {}
@@ -146,6 +146,8 @@ class AFD:
 
             # Guardando el estado con su etiqueta.
             self.diccionario_estados[etiqueta] = estado
+        
+        #print("Diccionario de estados: ", self.diccionario_estados)
 
         #print("Diccionario de estados: ", diccionario_estados)
 
@@ -385,6 +387,8 @@ class AFD:
             
         
         itera = True # Variable para controlar el ciclo while.
+        
+        print("Diccionario: ", diccionario)
 
         while itera: 
             new_partitions = [] # Lista para guardar las nuevas particiones.
@@ -398,7 +402,14 @@ class AFD:
                     #print("Transiciones: ", transiciones)
 
                     # Quitando las parejas que llegan a {}.
-                    transiciones = [t for t in transiciones if t != {}]
+                    #transiciones = [t for t in transiciones if t != {}]
+
+                    #print("Transiciones en la línea 407: ", transiciones)
+
+                    # Si hay una transición vacía en transiciones, continuar,
+                    # de lo contrario, buscar la partición del estado destino.
+                    if [] in transiciones:
+                        transiciones.remove([])
 
                     equivalent_states.setdefault(tuple(transiciones), []).append(state)
 
@@ -427,7 +438,7 @@ class AFD:
                     if self.estado_inicial_I in partition:
                         self.estado_inicial_I = i
                 
-                print("Estado inicial del AFD minimizado: ", self.estado_inicial_I)
+                #print("Estado inicial del AFD minimizado: ", self.estado_inicial_I)
                 for es in self.estado_inicial_I:
                     self.inicial_m.append(es)
 
@@ -444,6 +455,10 @@ class AFD:
             # BUscando las transiciones de cada estado.
             for simbolo in self.alfabeto: 
                 llegada = diccionario[est][simbolo]
+
+                # Si la llegada es vacía, entonces continuar.
+                if llegada == []:
+                    continue
 
                 new = tuple(sorted([buscar_particion(llegada)]))
 
@@ -485,7 +500,7 @@ class AFD:
         new_dict = {}
 
         for i, tupla in enumerate(new_states):
-            print("Id: ", i)
+            #print("Id: ", i)
 
             new_dict[tupla] = i
         
@@ -541,9 +556,9 @@ class AFD:
 
         self.diccionario_m =new_t.copy() 
 
-        print("Diccionario minimizado: ", self.diccionario_m)
-        print("Estados del AFD minimizado: ", self.estados_m)
-        print("Estados finales del AFD minimizado: ", self.finales_m)
+        # print("Diccionario minimizado: ", self.diccionario_m)
+        # print("Estados del AFD minimizado: ", self.estados_m)
+        # print("Estados finales del AFD minimizado: ", self.finales_m)
 
         
 
@@ -605,15 +620,17 @@ class AFD:
             else: 
                 diccionario_estados[i.estadoInicial] = [(i.simbolo, i.estadoFinal)]
 
-        print("Diccionario de estados: ", diccionario_estados)
+        #print("Diccionario de estados: ", diccionario_estados)
 
         # Creando el diccionario de transiciones.
         for key, value in diccionario_estados.items():
-            
-            #print("Estado: ", key, "Transiciones: ", value)
-
+        
             # Dibujando las transiciones.
             for simbolo, estado in value:
+
+                if estado == []: # Ignorando el estado vacío.
+                    continue
+
                 grafo.edge(str(key), str(estado), label=simbolo)
 
         # Dibuja los estados del AFD.

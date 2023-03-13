@@ -32,6 +32,8 @@ class SintaxT:
 
         self.construir() # Construyendo el árbol.
 
+        self.simularAFD() # Simulando el AFD.
+
         self.grafica() # Método para graficar.
 
         self.minimizar() # Minimización.
@@ -440,6 +442,49 @@ class SintaxT:
             
         return nuevo_estado
     
+    def simularAFD(self): # Simular AFD.
+        print("Estados. ", self.estadosAFD)
+
+        diccionario = {}
+
+        trans = []
+
+        # # Guardando localmente las transiciones de cada estado.
+        # for estado in self.estadosAFD:
+        #     print("Estado: ", estado, "Transiciones: ", estado.transitions)
+
+        # print("Transiciones: ", trans)
+
+        # Guardando el estado con sus transiciones en el diccionario.
+        for estado in self.estadosAFD:
+            diccionario[estado] = estado.transitions
+        
+        print("Diccionario: ", diccionario)
+
+        cadena = input("Ingrese la cadena a evaluar: ")
+
+        estado_actual = self.EstadoInicial # Estado inicial.
+
+        print("Tipo del estado inicial: ", type(estado_actual))
+
+        # Recorriendo la cadena.
+        for simbolo in cadena:
+            if simbolo not in self.alfabeth:
+                print("La cadena no pertenece al lenguaje.")
+                break
+
+            estado_actual = diccionario[estado_actual][simbolo] # Estado actual.
+            #print("Estado actual: ", estado_actual)
+
+        if estado_actual in self.EstadosAceptAFD:
+            print("La cadena pertenece al lenguaje.")
+            
+        else: 
+            print("La cadena no pertenece al lenguaje.")
+                
+
+
+    
     def grafica(self): #Método para graficar.
         grafo = gv.Digraph(comment="AFD", format="png")
         grafo.node('title', 'AFD', shape='none')
@@ -694,9 +739,8 @@ class SintaxT:
         for tup, val in new_transitions.items(): # Dándole más estética al diciconario.
             diccionario_m[(new_dict[tup[0]], tup[1])] = new_dict[val]
 
-            if tup[0] in new_finals or val in new_finals:
+            if tup[0] in new_finals:
                 #print("Estado final: ", new_dict[val])
-                finales_m.append(new_dict[val])
                 finales_m.append(new_dict[tup[0]])
             
             if tup[0] in inicial_m or val in inicial_m:
@@ -722,6 +766,8 @@ class SintaxT:
         
         for i, estado in enumerate(inicial_m):
             inicial_m[i] = int(estado)
+
+        #print("Estado inicial del AFD directo: ", inicial_m)
 
 
         """

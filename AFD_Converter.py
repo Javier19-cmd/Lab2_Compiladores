@@ -38,6 +38,7 @@ class AFD:
 
         self.conversion()
         self.graficar()
+        self.simular()
         self.minimizar()
 
     def conversion(self): # Método para convertir el AFD a AFD.
@@ -298,6 +299,89 @@ class AFD:
         # Retornando el resultado.
         return resultado
     
+    def simular(self): # Método para simular.
+        """
+        
+        self.trans_AFD = []
+        self.estados_Finales = []
+        self.estados_FinalesE = []
+        self.estados_AFD = []
+
+        # Listas para guardar los estados en su forma de integer.
+        self.estados_AFD_in = []
+        self.estados_Finales_I = []
+        self.estado_inicial_I = []
+        self.diccionario_estados_I = {}
+        self.diccionario_transiciones_I = {}
+
+        self.estadoInicial = []
+        self.dict = []
+        self.estado_inicial = []
+        self.diccionario_estados = {}
+        
+        
+        """
+        #print("Transiciones del AFD: ", self.trans_AFD)
+
+        # for trans in self.trans_AFD:
+        #     print(trans)
+
+        temp = {}
+
+        # Convertir la lista de transiciones a un diccionario.
+        for i in self.trans_AFD:
+            # Guardando la transición en un diccionario.
+            temp[i.estadoInicial, i.simbolo] = i.estadoFinal
+        
+        #print("Diccionario local: ", temp)
+
+        nuevo_diccionario = {}
+
+        for clave, valor in temp.items():
+            estado_act, simbolo = clave
+            estado_sig = valor
+
+            if estado_act not in nuevo_diccionario:
+                nuevo_diccionario[estado_act] = {}
+            
+            nuevo_diccionario[estado_act][simbolo] = estado_sig
+
+        # print("Nuevo diccionario: ", nuevo_diccionario)
+
+        # # Guardando el alfabeto.
+        # print("Alfabeto: ", self.alfabeto)
+
+        estado_I = None
+
+        # Obteniendo el estado inicial de su lista.
+        for estado in self.estado_inicial_I:
+            estado_I = estado
+
+        
+        #print("Estado inicial del AFD: ", estado_I, " estado finaL: ", self.estados_Finales_I)
+
+        # Simulando el AFD.
+        cadena = input("Ingrese la cadena a simular: ")
+
+        estado_actual = estado_I
+
+        # Recorriendo la cadena.
+        for simbolo in cadena: 
+            # Verificando si el símbolo está en el alfabeto.
+            if simbolo not in self.alfabeto:
+                print("La cadena no pertenece al lenguaje.")
+                break
+
+            # Obteniendo el estado siguiente.
+            estado_actual = nuevo_diccionario[estado_actual][simbolo]
+
+            if estado_actual in self.estados_Finales_I:
+                print("La cadena pertenece al lenguaje.")
+                break
+            else: 
+                print("La cadena no pertenece al lenguaje.")
+                break
+    
     def minimizar(self): # Método para minimizar el AFD construído.
         print("Minimización")
 
@@ -470,26 +554,38 @@ class AFD:
                 new_transitions[(new_states[particion], simbolo)] = new_states[new[0]]
 
 
+        # Buscando la partición y el estado final en las particiones.
         new_finals = []
 
-        for estadoA in self.estados_Finales_I: 
+        for estadoA in self.estados_Finales_I:
             final = buscar_particion(estadoA)
 
-            # print("Final: ", final)
+            new_finals.append(new_states[final])
 
-            # print("New states: ", new_states)
+        # Sacando de la partición el estado o estados de aceptación.
+    
 
-            new_finals.append(new_states[final]) 
+
+
+        # for estadoA in self.estados_Finales_I: 
+        #     final = buscar_particion(estadoA)
+
+        #     print("Final: ", final, "estadoA: ", estadoA)
+
+        #     #print("New states: ", new_states)
+
+        #     new_finals.append(new_states[final])
 
         new_initial = []
 
-        for estadoA in self.inicial_m:
-            inicial = buscar_particion(estadoA)
+        for estadoB in self.inicial_m:
+            inicial = buscar_particion(estadoB)
 
             new_initial.append(new_states[inicial])
 
         #print("New initial: ", new_initial)
         
+        #print("New finals: ", new_finals)
         """
         old_dict: new_transitions.
         new_dict: final_trasitions.
@@ -500,11 +596,17 @@ class AFD:
         for tupla in new_states:
             #print("Tupla: ", tupla)
 
+            #print("New finals: ", new_finals, " new states: ", new_states)
+
             # Si la tupla está en new_finals, correrlo hasta el final.
             if tupla in new_finals:
                 #print("Si llegué")
+                #print("Tupla: ", tupla)
                 indice = new_states.index(tupla)
+                #print("Índice: ", indice)
                 new_states.append(new_states.pop(indice))
+            else: 
+                continue
 
         # Creando un diccionario con los nuevos estados y sus íd's nuevos.
         new_dict = {}
@@ -517,7 +619,7 @@ class AFD:
 
         # # Imprimiendo el diccionario de transiciones.
         #print("New transitions en afd converter: ", new_transitions)
-        # print("New dict: ", new_dict)
+        #print("New dict: ", new_dict)
 
         #diccionario_n = {}
 
@@ -527,21 +629,33 @@ class AFD:
 
             self.diccionario_m[(new_dict[tupla[0]], tupla[1])] = new_dict[valor]
 
-            # Guardando el estado final en otra variable.
-            if tupla[0] in new_finals or valor in new_finals:
-                #print("Valor: ", valor)
+            # # Guardando el estado final en otra variable.
+            # if tupla[0] in new_finals or valor in new_finals:
+            #     #print("Valor: ", valor)
 
-                self.finales_m.append(new_dict[tupla[0]])
-                self.finales_m.append(new_dict[valor])
+            #     self.finales_m.append(new_dict[tupla[0]])
+            #     self.finales_m.append(new_dict[valor])
             
-            if tupla[0] in new_initial or valor in new_initial:
-                self.inicial_m.append(new_dict[valor])
-                self.inicial_m.append(new_dict[tupla[0]])
+            # #if tupla[0] in new_initial or valor in new_initial:
+            #     #print("Tupla en inicial: ", valor)
+            #     #self.inicial_m.append(new_dict[valor])
+            #     #self.inicial_m.append(new_dict[tupla[0]])
+            
+            # # Obteniendo el estado inicial del AFD.
+            # if tupla[0] in new_initial:
+            #     self.inicial_m.append(new_dict[tupla[0]])
+
 
             #print("new_dict[valor]: ", new_dict[valor])
 
+            #print("Diccionario: ", self.diccionario_m)
+
             self.estados_m.append(new_dict[valor])
             self.estados_m.append(new_dict[tupla[0]])
+
+            # Si la tupla está en el new_finals, entonces se agrega.
+            if tupla[0] in new_finals:
+                self.finales_m.append(new_dict[tupla[0]])
 
 
 
@@ -553,6 +667,11 @@ class AFD:
         
         # Guardando el estado inicial.
         #self.inicial_m = new_dict[self.inicial_m]
+        # print("Iniciales: ", self.inicial_m)
+        # print("Finales: ", self.finales_m)
+
+        # for ini in self.inicial_m:
+        #     print(type(ini))
         
 
 
@@ -582,7 +701,8 @@ class AFD:
         # print("Estados del AFD minimizado: ", self.estados_m)
         # print("Estados finales del AFD minimizado: ", self.finales_m)
 
-        
+        self.simularAFD_min() # Simulando el AFD minimizado.
+  
 
         """
         Estructuras a usar: 
@@ -617,6 +737,7 @@ class AFD:
             
             elif estado in self.inicial_m:
 
+
                 grafo.node(str(estado), str(estado), shape="circle", color="green")
             
             else:
@@ -627,6 +748,46 @@ class AFD:
         grafo.graph_attr['rankdir'] = 'LR'
 
         grafo.render('AFN2AFD_min', view=True) # Dibujando el grafo.
+    
+    def simularAFD_min(self): # Simulando el AFD minimizado.
+        
+        estadoI = self.inicial_m.pop(0)
+
+        # print("Diccionario del AFD minimizado: ", self.diccionario_m)
+        # print("Estados del AFD minimizado: ", self.estados_m)
+        # print("Estados finales del AFD minimizado: ", self.finales_m)
+        # print("Estado inicial del AFD minimizado: ", estadoI)
+        # print("Alfabeto del AFD minimizado: ", self.alfabeto)
+
+        nuevo_dict_m = {} # Diccionario para representar el diccionario de las transiciones.
+
+        for clave, valor in self.diccionario_m.items():
+            estado_act = clave
+            transiciones = {}
+
+            # Creando el diccionario para las transiciones del estado actual.
+            for simbolo, estado_sig in valor:
+                transiciones[simbolo] = estado_sig
+            
+            nuevo_dict_m[estado_act] = transiciones
+
+       # print("Nuevo diccionario", nuevo_dict_m)
+
+        # Simulando el AFD minimizado.
+        cadena = input("Ingrese la cadena a evaluar: ")
+        estado_actual = estadoI
+
+        for simbolo in cadena:
+            if simbolo not in self.alfabeto:
+                print("El símbolo ", simbolo, " no pertenece al alfabeto.")
+                break
+            
+            estado_actual = nuevo_dict_m[estado_actual][simbolo]
+
+        if estado_actual in self.finales_m:
+            print("Cadena aceptada.")
+        else:
+            print("Cadena rechazada")
 
 
     def graficar(self): # Método para dibujar el AFD.

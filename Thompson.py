@@ -340,8 +340,8 @@ def grafo(automata, lista, diccionario): # Método para graficar el AFN.
 
 def simular(automata, diccionario): # Método para simular el AFN.
     print("Simulación del AFN")
-    print("Diccionario: ", diccionario)
-    print("Automata: ", automata)
+    # print("Diccionario: ", diccionario)
+    # print("Automata: ", automata)
 
     # Creando un set con los estados del autómata.
     estados = set(diccionario.keys())
@@ -366,8 +366,8 @@ def simular(automata, diccionario): # Método para simular el AFN.
 
     estado_final.add(automata.estado_final)
 
-    print("Estado inicial: ", estado_inicial)
-    print("Estado final: ", estado_final)
+    # print("Estado inicial: ", estado_inicial)
+    # print("Estado final: ", estado_final)
 
     # Pidiéndole al usuario que ingrese una cadena.
     cadena = input("Ingrese una cadena: ")

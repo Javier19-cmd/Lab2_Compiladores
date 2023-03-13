@@ -751,7 +751,7 @@ class AFD:
         
         #estadoI = self.inicial_m.pop(0)
 
-        # print("Diccionario del AFD minimizado: ", self.diccionario_m)
+        #print("Diccionario del AFD minimizado: ", self.diccionario_m)
         # print("Estados del AFD minimizado: ", self.estados_m)
         # print("Estados finales del AFD minimizado: ", self.finales_m)
         # print("Estado inicial del AFD minimizado: ", estadoI)
@@ -775,12 +775,18 @@ class AFD:
         cadena = input("Ingrese la cadena a evaluar: ")
         estado_actual = self.inicial_m[0]
 
+        print("Nuevo diccionario: ", nuevo_dict_m)
+        print("Estado inicial: ", estado_act)
+
         for simbolo in cadena:
             if simbolo not in self.alfabeto:
                 print("El símbolo ", simbolo, " no pertenece al alfabeto.")
                 break
             
-            estado_actual = nuevo_dict_m[estado_actual][simbolo]
+            if simbolo in nuevo_dict_m[estado_act]:
+                estado_actual = nuevo_dict_m[estado_actual][simbolo]
+            else:
+                continue
 
         if estado_actual in self.finales_m:
             print("Cadena aceptada por el AFN2AFD_min.")

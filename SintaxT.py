@@ -866,9 +866,12 @@ class SintaxT:
                 print("El símbolo no pertenece al alfabeto.")
                 return
             
-            estado_actual = diccionario_simulacion[estado_actual][simbolo]
+            if simbolo in diccionario_simulacion[estado_actual]:
+                estado_actual = diccionario_simulacion[estado_actual][simbolo]
+            else:
+                continue
 
         if estado_actual in finales_m:
             print("Cadena aceptada por el AFD_min.")
         else:
-            print("Cadena rechazada el AFD_minel AFD_min")
+            print("Cadena rechazada el AFD_min")

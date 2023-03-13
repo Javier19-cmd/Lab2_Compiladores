@@ -272,20 +272,6 @@ def graficar(automata, lista, diccionario): #Método para graficar el autómata.
     # Cambiando el título de la ventana.
     plt.title("Autómata Finito No Determinista - Thompson")
 
-    #print(automata)
-    
-    # # Imprimiendo la lista.
-    # for automata in lista:
-    #     print(str(automata))
-
-    # # Imprimiedo el diccionario.
-    # for key, value in diccionario.items():
-    #     print(key, str(value))
-
-    # Colocando en un texto el estado inicial y el estado final.
-    #plt.text(0.5, 0.5, "Estado inicial: " + str(automata.get_estado_inicial()) + " Estado final: " + str(automata.get_estado_final()), fontsize=10)
-
-
     G = nx.DiGraph() # Creando el grafo.
 
     #print("Diciconario: " + str(diccionario))
@@ -323,7 +309,7 @@ def graficar(automata, lista, diccionario): #Método para graficar el autómata.
     plt.axis("off")
     plt.show()
 
-def grafo(automata, lista, diccionario):
+def grafo(automata, lista, diccionario): # Método para graficar el AFN.
     grafo = gv.Digraph('G', filename='grafo', format='png')
     
     grafo.node('title', 'AFN', shape='none')
@@ -352,4 +338,101 @@ def grafo(automata, lista, diccionario):
 
     grafo.render('AFN', view=True)
 
+def simular(automata, diccionario): # Método para simular el AFN.
+    print("Simulación del AFN")
+    print("Diccionario: ", diccionario)
+    print("Automata: ", automata)
 
+    # Creando un set con los estados del autómata.
+    estados = set(diccionario.keys())
+
+    # Obteniendo un set con el alfabeto desde el diccionario.
+    alfabeto = set()
+
+    for key, value in diccionario.items():
+        for simbolo, estado in value:
+            alfabeto.add(simbolo)
+    
+    # Quitando el epsilon del alfabeto.
+    #alfabeto.remove('ε')
+
+    #print("Alfabeto: ", alfabeto)
+
+    # Guardando el estado inicial.
+    estado_inicial = [automata.estado_inicial]
+    
+    # Guardando el estado final en un set.
+    estado_final = set()
+
+    estado_final.add(automata.estado_final)
+
+    print("Estado inicial: ", estado_inicial)
+    print("Estado final: ", estado_final)
+
+    # Pidiéndole al usuario que ingrese una cadena.
+    cadena = input("Ingrese una cadena: ")
+
+    # Lista para guardar los estados alcanzables.
+    s = cerradura_epsilon(estado_inicial, diccionario)
+    
+    # Jalando el siguiente estado.
+    for simbolo in cadena:
+        
+        # Verificando si el símbolo pertenece al alfabeto.
+        if simbolo in alfabeto:
+            s = mover(s, simbolo, diccionario)
+            s = cerradura_epsilon(s, diccionario)
+        else:
+            print("El símbolo no pertenece al alfabeto.")
+            break
+    
+    # Verificando si hay un estado de aceptación en s.
+    if estado_final.intersection(s):
+        print("La cadena es aceptada.")
+    else:
+        print("La cadena no es aceptada.")
+
+# Definiendo las funciones de para la simulada.
+def mover(estados, simbolo, diccionario):
+
+    resultado = []
+
+    for estado in estados:
+        # Verificando si el estado tiene transiciones con el símbolo actual.
+        if estado in diccionario:
+            # Si tiene transiciones con el símbolo actual, se agregan a la lista de estados alcanzables.
+            for simbolo2, estado2 in diccionario[estado]:
+                if simbolo == simbolo2:
+                    # Guardando los estados en la lista de estados alcanzables.
+                    resultado.append(estado2)
+    
+    return resultado
+
+# Definiendo la función para cerradura epsilon.
+def cerradura_epsilon(estados, diccionario):
+
+    # Lista para el resultado.
+    resultado = []
+
+    # Stack para guardar los estados.
+    stack = []
+
+    for est in estados: 
+        stack.append(est)
+
+    while len(stack) > 0:
+        # Obteniendo el estado actual.
+        estado = stack.pop()
+
+        # Verificando si el estado actual ya se encuentra en la lista de estados alcanzables.
+        if estado not in resultado:
+            # Si no se encuentra en la lista, se agrega.
+            resultado.append(estado)
+
+            # Verificando si el estado actual tiene transiciones con epsilon.
+            if estado in diccionario:
+                for simbolo, estado2 in diccionario[estado]:
+                    if simbolo == 'ε':
+                        stack.append(estado2)
+    
+    return resultado

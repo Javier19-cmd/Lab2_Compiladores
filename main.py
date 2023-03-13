@@ -1,5 +1,5 @@
 from reg import evaluar
-from Thompson import thompson, graficar, grafo, alfabeto
+from Thompson import thompson, grafo, alfabeto, simular
 from Errores import *
 from AFD_Converter import *
 from SintaxT import *
@@ -35,11 +35,13 @@ if verificacion == True: # Si la expresión regular es correcta, se procede a ev
     alfabeth = alfabeto(regex)
     print("La expresion regular es correcta.")
     print("La expresion regular es: ", regex)
-    automata, lista, diccionario = thompson(regex)
-    
-    
+    automata, lista, diccionario = thompson(regex) # Creando el AFN.
+
     #graficar(automata, lista, diccionario)
-    grafo(automata, lista, diccionario)
+    grafo(automata, lista, diccionario) # Graficando el AFN.
+    
+    # Simulando el AFN.
+    simular(automata,diccionario)
 
     # Haciendo la conversión a AFD.
     AFD(alfabeth, automata, lista, diccionario)

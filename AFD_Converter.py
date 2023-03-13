@@ -242,6 +242,8 @@ class AFD:
 
         resultado = []
 
+        #print("Diccionario del AFN: ", self.diccionario)
+
         # Recorriendo los estados del estado actual del AFD.
         for est in estado:
             # Verificando si el estado tiene transiciones con el símbolo actual.

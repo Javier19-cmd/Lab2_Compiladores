@@ -477,10 +477,10 @@ class SintaxT:
             #print("Estado actual: ", estado_actual)
 
         if estado_actual in self.EstadosAceptAFD:
-            print("La cadena pertenece al lenguaje.")
+            print("Cadena aceptada por el AFD directo.")
             
         else: 
-            print("La cadena no pertenece al lenguaje.")
+            print("Cadena rechazada por el AFD directo.")
                 
 
 
@@ -794,11 +794,12 @@ class SintaxT:
         
         diccionario_m = new_t.copy()
     
-        # # print("Diccionario final: ", diccionario_m)
+        #print("Diccionario final: ", diccionario_m)
         # print("Finales: ", finales_m)
         # print("Inicial: ", inicial_m)
         # print("Estados: ", estados_m)
         # print("Inicial: ", inicial_m)
+        self.simular_AFD_min(diccionario_m, estados_m, inicial_m, finales_m)
 
         # Gráfica
         grafo = gv.Digraph(comment="AFD_Directo_Minimizado", format="png")
@@ -833,3 +834,41 @@ class SintaxT:
         grafo.graph_attr['rankdir'] = 'LR'
 
         grafo.render('AFD_Directo_Minimizado', view=True) # Dibujando el grafo.
+
+    def simular_AFD_min(self, diccionario_m, estados_m, inicial_m, finales_m):
+        
+        # print("Diccionario: ", diccionario_m)
+        # print("Estados: ", estados_m)
+        # print("Inicial ", inicial_m)
+        # print("Finales: ", finales_m)
+
+        # Creando un diccionario para simular.
+        diccionario_simulacion = {}
+
+        for c, v in diccionario_m.items():
+            estado_actual = c
+            trans = {}
+
+            for simb, sig in v: 
+                trans[simb] = sig
+            
+            diccionario_simulacion[estado_actual] = trans
+        
+        print("Diccionario simulación: ", diccionario_simulacion)
+
+        # Simulando el AFD.
+        cadena = input("Ingrese la cadena a simular: ")
+
+        estado_actual = inicial_m[0]
+
+        for simbolo in cadena:
+            if simbolo not in self.alfabeth:
+                print("El símbolo no pertenece al alfabeto.")
+                return
+            
+            estado_actual = diccionario_simulacion[estado_actual][simbolo]
+
+        if estado_actual in finales_m:
+            print("Cadena aceptada por el AFD_min.")
+        else:
+            print("Cadena rechazada el AFD_minel AFD_min")

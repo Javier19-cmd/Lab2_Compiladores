@@ -375,12 +375,10 @@ class AFD:
             # Obteniendo el estado siguiente.
             estado_actual = nuevo_diccionario[estado_actual][simbolo]
 
-            if estado_actual in self.estados_Finales_I:
-                print("La cadena pertenece al lenguaje.")
-                break
-            else: 
-                print("La cadena no pertenece al lenguaje.")
-                break
+        if estado_actual in self.estados_Finales_I:
+            print("Cadena aceptada por el AFN2AFD")
+        else: 
+            print("Cadena rechazada por el AFN2AFD")
     
     def minimizar(self): # Método para minimizar el AFD construído.
         print("Minimización")
@@ -751,7 +749,7 @@ class AFD:
     
     def simularAFD_min(self): # Simulando el AFD minimizado.
         
-        estadoI = self.inicial_m.pop(0)
+        #estadoI = self.inicial_m.pop(0)
 
         # print("Diccionario del AFD minimizado: ", self.diccionario_m)
         # print("Estados del AFD minimizado: ", self.estados_m)
@@ -775,7 +773,7 @@ class AFD:
 
         # Simulando el AFD minimizado.
         cadena = input("Ingrese la cadena a evaluar: ")
-        estado_actual = estadoI
+        estado_actual = self.inicial_m[0]
 
         for simbolo in cadena:
             if simbolo not in self.alfabeto:
@@ -785,9 +783,9 @@ class AFD:
             estado_actual = nuevo_dict_m[estado_actual][simbolo]
 
         if estado_actual in self.finales_m:
-            print("Cadena aceptada.")
+            print("Cadena aceptada por el AFN2AFD_min.")
         else:
-            print("Cadena rechazada")
+            print("Cadena rechazada por el AFN2AFD_min")
 
 
     def graficar(self): # Método para dibujar el AFD.

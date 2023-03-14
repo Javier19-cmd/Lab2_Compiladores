@@ -751,11 +751,25 @@ class AFD:
         
         #estadoI = self.inicial_m.pop(0)
 
-        #print("Diccionario del AFD minimizado: ", self.diccionario_m)
+        # print("Diccionario del AFD minimizado: ", self.diccionario_m)
         # print("Estados del AFD minimizado: ", self.estados_m)
         # print("Estados finales del AFD minimizado: ", self.finales_m)
         # print("Estado inicial del AFD minimizado: ", estadoI)
         # print("Alfabeto del AFD minimizado: ", self.alfabeto)
+
+        # Quitando los estados trampa de la lista de estados.
+        for estado in self.estados_m:
+            # Verificando que los estados no tengan transiciones.
+            if estado not in self.diccionario_m:
+                self.estados_m.remove(estado)
+
+            # Si el estado era inicial, cambiarlo por el que le sigue.
+            if estado in self.inicial_m:
+                self.inicial_m.pop(estado)
+            self.inicial_m.append(self.estados_m[0])
+
+        print("Estados: ", self.estados_m)
+        print("Estado inicial: ", self.inicial_m)
 
         nuevo_dict_m = {} # Diccionario para representar el diccionario de las transiciones.
 
@@ -773,10 +787,10 @@ class AFD:
 
         # Simulando el AFD minimizado.
         cadena = input("Ingrese la cadena a evaluar: ")
-        estado_actual = self.inicial_m[0]
+        estado_actual = self.inicial_m.pop()
 
         print("Nuevo diccionario: ", nuevo_dict_m)
-        print("Estado inicial: ", estado_act)
+        print("Estado inicial: ", estado_actual)
 
         for simbolo in cadena:
             if simbolo not in self.alfabeto:

@@ -799,6 +799,20 @@ class SintaxT:
         # print("Inicial: ", inicial_m)
         # print("Estados: ", estados_m)
         # print("Inicial: ", inicial_m)
+
+        for estado in estados_m:
+            if estado not in diccionario_m:
+            # Quitando el estado de la lista de estados.
+                estados_m.remove(estado)
+
+            if estado in inicial_m: 
+                # Quitando el estado de la lista de estados iniciales.
+                inicial_m.remove(estado)
+
+        inicial_m.append(estados_m[0])
+
+        print("Inicial en SintaxT: ", inicial_m)
+
         self.simular_AFD_min(diccionario_m, estados_m, inicial_m, finales_m)
 
         # Gráfica
@@ -859,7 +873,8 @@ class SintaxT:
         # Simulando el AFD.
         cadena = input("Ingrese la cadena a simular: ")
 
-        estado_actual = inicial_m[0]
+        estado_actual = inicial_m.pop()
+
 
         for simbolo in cadena:
             if simbolo not in self.alfabeth:

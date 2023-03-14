@@ -346,6 +346,10 @@ class AFD:
             
             nuevo_diccionario[estado_act][simbolo] = estado_sig
 
+            # Si el estado llega a [], quitar la transición.
+            if nuevo_diccionario[estado_act][simbolo] == []:
+                nuevo_diccionario[estado_act].pop(simbolo)
+
         # print("Nuevo diccionario: ", nuevo_diccionario)
 
         # # Guardando el alfabeto.
@@ -371,9 +375,16 @@ class AFD:
             if simbolo not in self.alfabeto:
                 print("La cadena no pertenece al lenguaje.")
                 break
+            
+            print("Diccionario: ", nuevo_diccionario)
 
             # Obteniendo el estado siguiente.
-            estado_actual = nuevo_diccionario[estado_actual][simbolo]
+            if simbolo in nuevo_diccionario[estado_actual]:
+                
+                estado_actual = nuevo_diccionario[estado_actual][simbolo]
+            else: 
+                print("La cadena no es aceptada")
+                break
 
         if estado_actual in self.estados_Finales_I:
             print("Cadena aceptada por el AFN2AFD")
@@ -797,7 +808,10 @@ class AFD:
                 print("El símbolo ", simbolo, " no pertenece al alfabeto.")
                 break
             
-            if simbolo in nuevo_dict_m[estado_act]:
+            # print("Nuevo diccionario: ", nuevo_dict_m)
+            # print("Estado inicial: ", estado_actual)
+
+            if simbolo in nuevo_dict_m[estado_actual]:
                 estado_actual = nuevo_dict_m[estado_actual][simbolo]
             else:
                 continue

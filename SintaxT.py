@@ -457,7 +457,9 @@ class SintaxT:
 
         # Guardando el estado con sus transiciones en el diccionario.
         for estado in self.estadosAFD:
+            
             diccionario[estado] = estado.transitions
+
         
         print("Diccionario: ", diccionario)
 
@@ -472,8 +474,18 @@ class SintaxT:
             if simbolo not in self.alfabeth:
                 print("La cadena no pertenece al lenguaje.")
                 break
+            
+            # Imprimiendo el diccionario.
+            #print("Diccionario: ", diccionario)
 
             estado_actual = diccionario[estado_actual][simbolo] # Estado actual.
+            
+            if estado_actual != {}:
+                continue
+            else: 
+                print("Cadena no aceptada")
+                break
+
             #print("Estado actual: ", estado_actual)
 
         if estado_actual in self.EstadosAceptAFD:

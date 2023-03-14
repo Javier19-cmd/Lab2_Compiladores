@@ -338,6 +338,51 @@ def grafo(automata, lista, diccionario): # Método para graficar el AFN.
 
     grafo.render('AFN', view=True)
 
+    # Obteniendo los estados del AFN.
+    estados = list(diccionario.keys())
+
+    # Obteniendo el alfabeto del AFN.
+    alfabeto = set()
+
+    for estado in estados: 
+        for transicion in diccionario[estado]:
+            alfabeto.add(transicion[0])
+    
+    # Creando la tabla de transiciones.
+    tabla = {}
+
+    for estado in estados: 
+        tabla[estado] = {}
+        for simbolo in alfabeto:
+            tabla[estado][simbolo] = set()
+
+            for transicion in diccionario[estado]:
+                if transicion[0] == simbolo:
+                    tabla[estado][simbolo].add(transicion[1])
+            if not tabla[estado][simbolo]:
+                tabla[estado][simbolo] = None
+            
+    # # Imprimiendo las transiciones.
+    # print("Tabla de transiciones del AFN: ")
+    # print("Estado | ", end="")
+
+    # for simbolo in sorted(alfabeto):
+    #     print(simbolo, end=" | ")
+
+    # print()
+    # print("-" * (8 + 4 * len(alfabeto)))
+
+    # for estado in estados: 
+    #     print(f"{estado}".ljust(7), end="| ")
+    #     for simbolo in sorted(alfabeto):
+    #         if tabla[estado][simbolo] is None:
+    #             print("".ljust(3), end="| ")
+    #         else: 
+    #           print(",".join(str(x) for x in tabla[estado][simbolo]).ljust(3), end=" | ")
+
+    #     print()
+
+
 def simular(automata, diccionario): # Método para simular el AFN.
     print("Simulación del AFN")
     # print("Diccionario: ", diccionario)

@@ -381,7 +381,7 @@ class AFD:
             print("Cadena rechazada por el AFN2AFD")
     
     def minimizar(self): # Método para minimizar el AFD construído.
-        print("Minimización")
+        #print("Minimización")
 
         #print("Diccionario del AFD: ", self.diccionario)
 
@@ -866,3 +866,7 @@ class AFD:
         grafo.graph_attr['rankdir'] = 'LR'
 
         grafo.render('AFN2AFD', view=True) # Dibujando el grafo.
+
+        # Hacer una tabla de transiciones con el diccionario que se usó para graficar.
+        #print("Diccionario de estados: ", diccionario_estados)
+        #print("Diccionario de transiciones: ", diccionario_transiciones)

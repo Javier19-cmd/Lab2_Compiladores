@@ -632,6 +632,9 @@ class AFD:
 
         #diccionario_n = {}
 
+        print("New transitions: ", new_transitions)
+        print("New finals: ", new_finals)
+
         for tupla, valor in new_transitions.items():
             #print("Tupla[0]: ", tupla[0], "valor: ", valor)
 
@@ -664,7 +667,13 @@ class AFD:
 
             # Si la tupla está en el new_finals, entonces se agrega.
             if tupla[0] in new_finals:
+                print("New finals: ", new_finals)
                 self.finales_m.append(new_dict[tupla[0]])
+            
+
+        for estado in new_states: 
+            if estado in new_finals:
+                self.finales_m.append(new_dict[estado])
 
 
 
@@ -708,7 +717,7 @@ class AFD:
 
         # print("Diccionario minimizado: ", self.diccionario_m)
         # print("Estados del AFD minimizado: ", self.estados_m)
-        # print("Estados finales del AFD minimizado: ", self.finales_m)
+        #print("Estados finales del AFD minimizado: ", self.finales_m)
 
         self.simularAFD_min() # Simulando el AFD minimizado.
   
@@ -737,7 +746,7 @@ class AFD:
         # Dibujando los estados.
         for estado in self.estados_m:
             
-            #print("Estado: ", estado, "Finales: ", self.finales_m, "Iniciales: ", self.inicial_m.
+            #print("Estado: ", estado, "Finales: ", self.finales_m, "Iniciales: ", self.inicial_m)
 
             if estado in self.finales_m:
                 
@@ -811,8 +820,10 @@ class AFD:
             # print("Nuevo diccionario: ", nuevo_dict_m)
             # print("Estado inicial: ", estado_actual)
 
+
             if simbolo in nuevo_dict_m[estado_actual]:
                 estado_actual = nuevo_dict_m[estado_actual][simbolo]
+                print("Estado en evaluación: ", estado_act)
             else:
                 continue
 

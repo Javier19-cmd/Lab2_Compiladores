@@ -737,6 +737,7 @@ class SintaxT:
                 #print("Tupla con el estado final: ", tupla)
                 indice = new_states.index(tupla)
                 new_states.append(new_states.pop(indice))
+    
 
         # Creando un diccionario con los nuevos estados y sus íd's nuevos.
         new_dict = {}
@@ -751,9 +752,9 @@ class SintaxT:
         for tup, val in new_transitions.items(): # Dándole más estética al diciconario.
             diccionario_m[(new_dict[tup[0]], tup[1])] = new_dict[val]
 
-            if tup[0] in new_finals:
-                #print("Estado final: ", new_dict[val])
-                finales_m.append(new_dict[tup[0]])
+            # if tup[0] in new_finals:
+            #     #print("Estado final: ", new_dict[val])
+            #     finales_m.append(new_dict[tup[0]])
             
             if tup[0] in inicial_m or val in inicial_m:
                 #print("Estado final: ", new_dict[val])
@@ -762,6 +763,11 @@ class SintaxT:
 
             estados_m.append(new_dict[val])
             estados_m.append(new_dict[tup[0]])
+        
+        for estado in new_states: 
+            print("Estado en el sintaxT: ", estado)
+            if estado in new_finals:
+                finales_m.append(new_dict[estado])
 
         # Quitando repeticiones.
         inicial_m = list(set(inicial_m))
@@ -821,9 +827,11 @@ class SintaxT:
                 # Quitando el estado de la lista de estados iniciales.
                 inicial_m.remove(estado)
 
+
         inicial_m.append(estados_m[0])
 
         print("Inicial en SintaxT: ", inicial_m)
+        print("Final en el SintaxT: ", finales_m)
 
         self.simular_AFD_min(diccionario_m, estados_m, inicial_m, finales_m)
 
